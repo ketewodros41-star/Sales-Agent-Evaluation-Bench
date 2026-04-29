@@ -49,6 +49,5 @@ ablations/
 *.swo
 
 # Temp / scratch
-gen_dataset.py
 *.tmp
 /tmp/
