@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets / API keys
+.env
+*.local
+secrets.json
+
+# Large model files
+*.bin
+*.safetensors
+*.gguf
+
+# Training artifacts (not yet committed — Days 5-6)
+training/
+training_data/
+ablations/
+
+# Held-out seal (keep held_out/ in repo but never expose in training scripts)
+# held_out is version-controlled but excluded from training pipelines via script flags
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp / scratch
+gen_dataset.py
+*.tmp
+/tmp/

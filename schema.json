@@ -1,0 +1,204 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tenacious-Bench v0.1 Task Schema",
+  "description": "Machine-verifiable benchmark task schema for evaluating B2B sales outreach agents on Tenacious-specific dimensions.",
+  "version": "0.1.0",
+  "type": "object",
+  "required": ["task_id", "dimension", "difficulty", "source_mode", "input", "expected_features", "rubric"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^tb_(train|dev|held)_[0-9]{4}$",
+      "description": "Unique task identifier with partition prefix."
+    },
+    "dimension": {
+      "type": "string",
+      "enum": ["signal_grounding", "tone_compliance", "cta_quality", "personalization", "bench_fit_alignment"],
+      "description": "Primary evaluation dimension this task targets."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"],
+      "description": "Task difficulty based on signal ambiguity and required inference depth."
+    },
+    "source_mode": {
+      "type": "string",
+      "enum": ["trace-derived", "programmatic", "multi-llm-synthesis", "adversarial"],
+      "description": "How this task was authored."
+    },
+    "input": {
+      "type": "object",
+      "required": ["company_signal", "bench_summary", "prior_thread"],
+      "properties": {
+        "company_signal": {
+          "type": "string",
+          "description": "Structured hiring/firmographic signal for the prospect company, including signal confidence and staleness."
+        },
+        "bench_summary": {
+          "type": "string",
+          "description": "Current Tenacious bench inventory relevant to this prospect's needs."
+        },
+        "prior_thread": {
+          "type": "string",
+          "description": "Prior email/SMS thread context, or empty string for cold outreach."
+        }
+      }
+    },
+    "expected_features": {
+      "type": "object",
+      "required": ["must_reference_signal", "must_include_cta", "banned_phrases"],
+      "properties": {
+        "must_reference_signal": {
+          "type": "boolean",
+          "description": "Output must contain at least one non-generic reference to the company_signal."
+        },
+        "must_include_cta": {
+          "type": "boolean",
+          "description": "Output must contain a call-to-action (calendar link, slot offer, or explicit meeting ask)."
+        },
+        "banned_phrases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Phrases whose presence in the output incurs a scoring penalty."
+        },
+        "required_hedges": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "For low-confidence signal tasks: hedging language patterns that must appear if a claim is made."
+        },
+        "max_headcount_commitment": {
+          "type": ["integer", "null"],
+          "description": "Maximum headcount that may be committed without delivery-lead routing. Null means no commitment allowed."
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "required": ["signal_grounding", "tone_alignment", "cta_quality"],
+      "properties": {
+        "signal_grounding": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "0=no signal reference, 1=generic reference, 2=specific accurate reference, 3=calibrated-confidence specific reference."
+        },
+        "tone_alignment": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "0=banned phrase present, 1=neutral/template language, 2=Tenacious-voice compliant, 3=peer-to-peer expert tone."
+        },
+        "cta_quality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "0=no CTA or forced booking, 1=generic CTA, 2=stage-appropriate CTA, 3=stage-appropriate CTA with friction-reducing specifics."
+        },
+        "bench_fit_accuracy": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "0=impossible commitment made, 1=no bench reference when required, 2=bench reference without over-commitment, 3=bench-gated routing with human handoff."
+        },
+        "personalization_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "0=purely generic, 1=company name only, 2=signal-specific detail, 3=multi-signal synthesis with inference shown."
+        }
+      }
+    },
+    "gold_output": {
+      "type": ["string", "null"],
+      "description": "Reference output for trace-derived tasks. Null for generative tasks where rubric scoring is the ground truth."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Authoring notes, trace references, or rubric revision history."
+    }
+  },
+
+  "example_tasks": [
+    {
+      "task_id": "tb_train_0001",
+      "dimension": "signal_grounding",
+      "difficulty": "hard",
+      "source_mode": "trace-derived",
+      "input": {
+        "company_signal": "Company: Meridian Software (Series B, $18M, closed 45 days ago). Open engineering roles: 2 (1 Senior Backend, 1 DevOps). Employee count: 120. AI maturity score: 1 (confidence: 0.65, low). Signal age: 45 days. Layoff signal: none.",
+        "bench_summary": "Available bench: 6 Python engineers (3 senior, 3 mid), 2 DevOps engineers, 1 Go engineer, 0 Rust engineers. Next availability window: 2 weeks.",
+        "prior_thread": ""
+      },
+      "expected_features": {
+        "must_reference_signal": true,
+        "must_include_cta": true,
+        "banned_phrases": ["offshore", "outsourcing", "cost reduction", "scale aggressively", "aggressive hiring", "massive growth"],
+        "required_hedges": ["are you finding", "it looks like", "appears", "from what we can see"],
+        "max_headcount_commitment": null
+      },
+      "rubric": {
+        "signal_grounding": 0,
+        "tone_alignment": 0,
+        "cta_quality": 0,
+        "bench_fit_accuracy": 0,
+        "personalization_depth": 0
+      },
+      "gold_output": null,
+      "notes": "Derived from tr_dev_007 (P-005). With only 2 open roles, agent must NOT assert 'aggressive hiring'. Correct output hedges: 'Are you finding it harder to fill backend capacity?' Signal confidence 0.65 < threshold for assertion. Rubric: signal_grounding=3 requires hedged phrasing; tone_alignment=3 requires no banned phrases and peer-to-peer register."
+    },
+    {
+      "task_id": "tb_train_0002",
+      "dimension": "bench_fit_alignment",
+      "difficulty": "hard",
+      "source_mode": "programmatic",
+      "input": {
+        "company_signal": "Company: Forge Analytics (Seed, $3M, closed 60 days ago). Open engineering roles: 7 (3 Python, 2 React, 1 Go, 1 Rust). Employee count: 28. AI maturity score: 0. Signal age: 60 days. Layoff signal: none.",
+        "bench_summary": "Available bench: 4 Python engineers (2 senior, 2 mid), 3 React engineers, 1 Go engineer, 0 Rust engineers. Next availability window: 3 weeks.",
+        "prior_thread": "Prospect reply (2 days ago): 'We need 3 Rust engineers for a 6-month systems rewrite. Can Tenacious deliver that quickly?'"
+      },
+      "expected_features": {
+        "must_reference_signal": true,
+        "must_include_cta": true,
+        "banned_phrases": ["offshore", "outsourcing", "we have 3 Rust", "can start Monday", "immediately available"],
+        "required_hedges": [],
+        "max_headcount_commitment": null
+      },
+      "rubric": {
+        "signal_grounding": 0,
+        "tone_alignment": 0,
+        "cta_quality": 0,
+        "bench_fit_accuracy": 0,
+        "personalization_depth": 0
+      },
+      "gold_output": null,
+      "notes": "Derived from P-009/P-010 (bench over-commitment). Bench has 0 Rust engineers. Agent must NOT commit to 3 Rust engineers. Correct output routes to delivery lead: 'Let me loop in our delivery lead to verify Rust capacity before we commit.' bench_fit_accuracy=3 requires explicit routing. cta_quality=3 requires specific next step offered (15-min call with delivery lead)."
+    },
+    {
+      "task_id": "tb_train_0003",
+      "dimension": "tone_compliance",
+      "difficulty": "medium",
+      "source_mode": "adversarial",
+      "input": {
+        "company_signal": "Company: Vantage Health Tech (Series A, $12M, closed 120 days ago). Open engineering roles: 6 (2 Python, 2 Java, 2 ML Engineer). Employee count: 85. AI maturity score: 2 (confidence: 0.72, medium). Signal age: 120 days. Layoff signal: none. Competitor gap: no public eval framework (gap_conf: 0.71).",
+        "bench_summary": "Available bench: 5 Python engineers, 2 ML engineers, 1 Java engineer. Next availability window: 1 week.",
+        "prior_thread": "Prospect reply: 'We build everything in-house. We don't believe in outsourcing.'"
+      },
+      "expected_features": {
+        "must_reference_signal": false,
+        "must_include_cta": true,
+        "banned_phrases": ["outsourcing", "offshore", "I understand your concern", "I apologize", "you're missing out", "your competitors are miles ahead"],
+        "required_hedges": ["consulting", "embedded", "capability extension"],
+        "max_headcount_commitment": null
+      },
+      "rubric": {
+        "signal_grounding": 0,
+        "tone_alignment": 0,
+        "cta_quality": 0,
+        "bench_fit_accuracy": 0,
+        "personalization_depth": 0
+      },
+      "gold_output": null,
+      "notes": "Adversarial probe targeting P-014 (defensive tone drift) and P-031 (gap over-claiming condescension). Agent receives a hostile in-house objection AND a low-confidence competitor gap. Correct response: acknowledge in-house preference, reframe Tenacious as consulting not outsourcing, offer graceful exit. Must NOT use defensive language or claim competitor gap at conf < 0.75. tone_alignment=3 requires peer-to-peer reframe without apology."
+    }
+  ]
+}

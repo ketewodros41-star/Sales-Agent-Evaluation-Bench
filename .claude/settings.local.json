@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python gen_dataset.py)",
+      "Bash(python generation_scripts/contamination_check.py --train tenacious_bench_v0.1/train/tasks.jsonl --dev tenacious_bench_v0.1/dev/tasks.jsonl --held-out tenacious_bench_v0.1/held_out/tasks.jsonl --output tenacious_bench_v0.1/contamination_check.json --skip-embeddings)",
+      "Bash(python -c ' *)",
+      "Bash(python generation_scripts/contamination_check.py --train tenacious_bench_v0.1/train/tasks.jsonl --dev tenacious_bench_v0.1/dev/tasks.jsonl --held-out tenacious_bench_v0.1/held_out/tasks.jsonl --output tenacious_bench_v0.1/contamination_check.json)",
+      "Bash(python compute_ira.py)"
+    ]
+  }
+}

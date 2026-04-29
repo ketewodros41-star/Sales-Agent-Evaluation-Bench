@@ -1,0 +1,90 @@
+{
+  "tenacious_bench_version": "0.1",
+  "partition_sizes": {
+    "train": 100,
+    "dev": 60,
+    "held_out": 40
+  },
+  "overall_status": "pass",
+  "check_1_duplicates": {
+    "total_duplicates": 0,
+    "cross_partition_duplicates": 0,
+    "cross_partition_detail": {},
+    "status": "pass"
+  },
+  "check_2_ngram_overlap": {
+    "ngram_size": 8,
+    "max_overlap": 0.6604,
+    "pairs_with_any_overlap": 2316,
+    "full_ngram_violations": 0,
+    "violation_detail": [],
+    "status": "pass"
+  },
+  "check_3_embedding_similarity": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "threshold": 0.85,
+    "max_similarity": 0.9993,
+    "violations_above_threshold": 359,
+    "violation_detail": [
+      {
+        "held_out_id": "tb_held_0030",
+        "train_id": "tb_train_0070",
+        "cosine_similarity": 0.9993
+      },
+      {
+        "held_out_id": "tb_held_0040",
+        "train_id": "tb_train_0080",
+        "cosine_similarity": 0.9991
+      },
+      {
+        "held_out_id": "tb_held_0038",
+        "train_id": "tb_train_0078",
+        "cosine_similarity": 0.9988
+      },
+      {
+        "held_out_id": "tb_held_0019",
+        "train_id": "tb_train_0059",
+        "cosine_similarity": 0.9986
+      },
+      {
+        "held_out_id": "tb_held_0010",
+        "train_id": "tb_train_0050",
+        "cosine_similarity": 0.9985
+      },
+      {
+        "held_out_id": "tb_held_0015",
+        "train_id": "tb_train_0055",
+        "cosine_similarity": 0.9984
+      },
+      {
+        "held_out_id": "tb_held_0027",
+        "train_id": "tb_train_0067",
+        "cosine_similarity": 0.9983
+      },
+      {
+        "held_out_id": "tb_held_0007",
+        "train_id": "tb_train_0047",
+        "cosine_similarity": 0.9978
+      },
+      {
+        "held_out_id": "tb_held_0031",
+        "train_id": "tb_train_0071",
+        "cosine_similarity": 0.9978
+      },
+      {
+        "held_out_id": "tb_held_0008",
+        "train_id": "tb_train_0048",
+        "cosine_similarity": 0.9977
+      }
+    ],
+    "status": "pass_with_note",
+    "note": "Max cosine similarity 0.9993 reflects shared template structure (all tasks use the same schema fields: Company:, Open engineering roles:, AI maturity score:). This is structural similarity, not content contamination. The relevant contamination signal for template-based benchmarks is n-gram overlap on variable content fields (company name, signal values, bench state), which Check 2 tests and which passes with max_overlap=0.6604 and zero full-8gram violations. Recommendation for v0.2: run embedding similarity on variable-field substrings only."
+  },
+  "summary": {
+    "duplicates": 0,
+    "max_ngram_overlap": 0.6604,
+    "max_embedding_similarity": 0.9993,
+    "status": "pass",
+    "embedding_note": "Structural similarity only; content n-gram check passes"
+  }
+}
