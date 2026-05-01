@@ -55,7 +55,7 @@ Tenacious-Bench v0.1 is a 200-task benchmark dataset that evaluates whether the 
 
 ```bash
 # Python 3.11+ required
-pip install sentence-transformers numpy httpx
+pip install -r requirements.txt
 
 # Extract a single task from the JSONL, then run the scorer
 head -1 tenacious_bench_v0.1/train/tasks.jsonl > /tmp/sample_task.json

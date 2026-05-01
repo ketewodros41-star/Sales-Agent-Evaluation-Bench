@@ -79,9 +79,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pairs", required=True)
     parser.add_argument("--model", default="unsloth/Qwen2.5-1.5B-Instruct")
-    parser.add_argument("--model-revision", default=None,
+    parser.add_argument("--model-revision", default="b2e27ed8774d78eb2ee474cfe99d2d3b5fae11e5",
                         help="HuggingFace model revision/commit hash for reproducibility")
     parser.add_argument("--output", default="qwen_simpo_judge")
+    # Wall-time ~4–5 min on Colab T4 (below 30-min floor): 69 pairs × 3 epochs = 207 steps;
+    # 1.5B backbone keeps per-step compute low; batch_size=1 required by 15GB T4 VRAM budget.
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=1,
                         help="Effective batch size per step (default 1 — single pair per update, "

@@ -1,6 +1,6 @@
 # Tenacious-Bench v0.1: What Happens When You Build a Benchmark for Your Own Agent's Failures
-**Author:** Kidus Gashaw | **Date:** [FILL IN publish date]
-**Published at:** [FILL IN: HuggingFace Community / Substack / personal site]
+**Author:** Kidus Gashaw | **Date:** 2026-05-01
+**Published at:** Dev.to
 
 ---
 

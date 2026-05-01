@@ -1,13 +1,21 @@
 {
   "model": "unsloth/Qwen2.5-1.5B-Instruct",
+  "model_revision": "b2e27ed8774d78eb2ee474cfe99d2d3b5fae11e5",
   "epochs": 3,
+  "batch_size": 1,
   "beta": 2.0,
   "gamma": 0.5,
   "lr": 5e-05,
+  "warmup_steps": 10,
+  "scheduler": "cosine",
+  "lora_r": 16,
+  "lora_alpha": 16,
+  "lora_dropout": 0.0,
   "seed": 42,
   "n_pairs": 69,
+  "total_steps": 207,
   "final_loss": 0.5165,
   "final_margin": 3.9813,
-  "total_elapsed_s": 268.8,
+  "total_elapsed_s": 263.8,
   "converged": true
 }

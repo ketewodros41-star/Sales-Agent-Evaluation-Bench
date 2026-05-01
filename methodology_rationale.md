@@ -85,11 +85,11 @@ If the valid pair count falls below 80 after applying δ ≥ 0.20 globally, the 
 
 | Decision | Grounding Paper |
 |---|---|
-| Cross-family model routing (Claude generates, Qwen judges) | Li et al. 2025 (Preference Leakage) — cross-family selection eliminates score inflation |
-| SimPO over DPO | Meng et al. NeurIPS 2024 (SimPO) — reference-free, memory-efficient, competitive performance |
-| γ set from score distribution not grid search | Meng et al. NeurIPS 2024 — grid search requires large dev set; δ distribution is the reliable signal |
-| LLM judge confined to dataset construction | Gu et al. 2024–2025 (LLM-as-Judge Survey) — deterministic rubrics don't benefit from LLM judgment |
-| 8-gram contamination threshold | Chen et al. EMNLP 2025 — 8-gram minimum for reliable memorization signal |
-| Pointwise over pairwise for quality filter | Gu et al. 2024–2025 — per-dimension independence means pairwise collapses signal |
-| Rubric as ground truth (no model-generated gold standard) | Li et al. 2025 — task-definition leakage via model-generated gold standards |
-| Small judge model (7B class) is sufficient | Kim et al. 2024 (Prometheus 2) — 7B judge matches GPT-4 on rubric correlation |
+| Cross-family model routing (Claude generates, Qwen judges) | Li et al. 2025 §5.3 (cross-family judge selection as primary mitigation) — eliminates score inflation; confirmed empirically in Tenacious dry run: 78% Claude self-acceptance vs. 4.2% Qwen cross-family |
+| SimPO over DPO | Meng et al. NeurIPS 2024 (reference-free reward formulation, memory and training-time comparison) — one forward pass instead of two; required by Colab T4 VRAM budget |
+| γ set from score distribution not grid search | Meng et al. NeurIPS 2024 §4.2 (γ grid-search recommendation on held-out preference dev split) — grid search is meaningless on <20 pairs; δ distribution of training pairs is the correct calibration signal for small-data domain-specific preference datasets |
+| LLM judge confined to dataset construction, not evaluation | Gu et al. 2024–2025 §3.2 (reference-based evaluation as the recommended high-fidelity paradigm) — deterministic rubrics don't require LLM judgment; mechanical dimensions outperform judgment-heavy ones in IRA (cta_quality κ=0.853, signal_grounding κ=0.857 vs. personalization_depth κ=0.682 before revision) |
+| Model rotation policy (Claude generates, Qwen judges) | Gu et al. 2024–2025 §4.3 (self-preference bias) — a Claude judge evaluating Claude-generated tasks inflates acceptance; cross-family rotation directly mitigates self-preference |
+| 8-gram contamination threshold | Chen et al. EMNLP 2025 — 8-gram minimum for reliable memorization signal vs. coincidental shared phrasing in professional email register |
+| Rubric as ground truth (no model-generated gold standard) | Li et al. 2025 §5.3 — task-definition leakage occurs when the model that defines "correct" also generates training data; scoring_evaluator.py derives ground truth from operational documents (style guide, capacity policy), not from any model output |
+| Small judge model (7B class) is sufficient for quality filtering | Kim et al. 2024 §3.1 (Feedback Collection training dataset and evaluation protocol) — Prometheus 2 7B achieves Pearson r=0.88 with human judgments on Vicuna-Bench, matching GPT-4 (r=0.89); justifies Qwen-class model for Tenacious quality filter |
