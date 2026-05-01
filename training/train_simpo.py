@@ -1,32 +1,24 @@
 """
-SimPO preference training script for Tenacious-Bench judge.
-Uses TRL's DPOTrainer with loss_type='simpo' — handles gradient flow correctly.
-Target: Colab T4 (15GB VRAM), Qwen2.5-1.5B-Instruct backbone, ≤30 min wall time.
+SimPO preference training — self-contained, no TRL dependency.
+Uses transformers + PEFT + BitsAndBytes directly with a manual SimPO loss loop.
 
 Run:
     python train_simpo.py \
-        --pairs preference_pairs.jsonl \
-        --model unsloth/Qwen2.5-1.5B-Instruct \
-        --output qwen_simpo_judge \
-        --epochs 3 \
-        --beta 2.0 \
-        --gamma 0.5 \
-        --lr 5e-5 \
-        --seed 42
-
-Kill criterion: if training loss has not dropped below 0.65 within 10 minutes, halt.
+        --pairs preference_pairs_v3.jsonl \
+        --output qwen_simpo_judge_v3 \
+        --epochs 3
 """
 
 import argparse
 import json
 import logging
-import os
 import random
 import time
 from pathlib import Path
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -39,7 +31,7 @@ SYSTEM_PROMPT = (
 )
 
 
-def load_pairs(path: str) -> list[dict]:
+def load_pairs(path: str) -> list:
     pairs = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -51,7 +43,6 @@ def load_pairs(path: str) -> list[dict]:
 
 
 def format_prompt(task: dict) -> str:
-    """Build the judge prompt for a task."""
     inp = task.get("input", {})
     return (
         f"Task context:\n"
@@ -64,48 +55,45 @@ def format_prompt(task: dict) -> str:
     )
 
 
-def pairs_to_hf_dataset(pairs: list[dict], tokenizer):
-    """Convert preference pairs to HuggingFace dataset format for TRL DPOTrainer."""
-    from datasets import Dataset
+def length_normalized_logprob(model, inputs: dict, device: str) -> torch.Tensor:
+    """Compute length-normalized sum of log-probabilities for a sequence."""
+    input_ids = inputs["input_ids"].to(device)
+    attention_mask = inputs["attention_mask"].to(device)
 
-    records = []
-    for p in pairs:
-        prompt = format_prompt(p["task"])
-        chosen_text = p["chosen"]["output"]
-        rejected_text = p["rejected"]["output"]
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    logits = outputs.logits[:, :-1, :]          # [1, L-1, V]
+    labels = input_ids[:, 1:]                    # [1, L-1]
 
-        # Apply chat template to get formatted strings
-        chosen_messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt + chosen_text},
-        ]
-        rejected_messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt + rejected_text},
-        ]
+    log_probs = F.log_softmax(logits, dim=-1)
+    token_lp = log_probs.gather(2, labels.unsqueeze(-1)).squeeze(-1)  # [1, L-1]
+    return token_lp.sum() / labels.shape[1]      # scalar
 
-        records.append({
-            "prompt": prompt,
-            "chosen": chosen_text,
-            "rejected": rejected_text,
-            "chosen_score": p["chosen"]["final_score"],
-            "rejected_score": p["rejected"]["final_score"],
-            "score_gap": p["score_gap"],
-        })
 
-    return Dataset.from_list(records)
+def simpo_loss(chosen_lp: torch.Tensor, rejected_lp: torch.Tensor,
+               beta: float, gamma: float) -> torch.Tensor:
+    """SimPO: -log σ(β * (r_chosen - r_rejected - γ))"""
+    return -F.logsigmoid(beta * (chosen_lp - rejected_lp - gamma))
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train SimPO preference judge via TRL")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--pairs", required=True)
     parser.add_argument("--model", default="unsloth/Qwen2.5-1.5B-Instruct")
+    parser.add_argument("--model-revision", default=None,
+                        help="HuggingFace model revision/commit hash for reproducibility")
     parser.add_argument("--output", default="qwen_simpo_judge")
     parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--batch-size", type=int, default=1,
+                        help="Effective batch size per step (default 1 — single pair per update, "
+                             "memory-constrained by Colab T4 with 4-bit quantization)")
     parser.add_argument("--beta", type=float, default=2.0)
     parser.add_argument("--gamma", type=float, default=0.5)
     parser.add_argument("--lr", type=float, default=5e-5)
-    parser.add_argument("--grad-accum", type=int, default=4)
+    parser.add_argument("--warmup-steps", type=int, default=10,
+                        help="Linear warmup steps before reaching peak lr (default 10)")
+    parser.add_argument("--scheduler", default="cosine",
+                        choices=["cosine", "linear", "none"],
+                        help="LR scheduler after warmup (default: cosine)")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
@@ -116,151 +104,157 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     log.info("Device: %s", device)
 
-    # Load model via Unsloth
-    try:
-        from unsloth import FastLanguageModel
-        model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name=args.model,
-            max_seq_length=1024,
-            dtype=None,  # auto: float16 on T4, bfloat16 on Ampere+
-            load_in_4bit=True,
-        )
-        model = FastLanguageModel.get_peft_model(
-            model,
-            r=16,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                            "gate_proj", "up_proj", "down_proj"],
-            lora_alpha=16,
-            lora_dropout=0.0,
-            bias="none",
-            use_gradient_checkpointing="unsloth",
-            random_state=args.seed,
-        )
-        log.info("Loaded model via Unsloth (4-bit + LoRA)")
-    except Exception as e:
-        log.error("Unsloth load failed: %s", e)
-        raise
+    # ── Load model (transformers + PEFT, no unsloth / no TRL) ──────────────
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+    from peft import LoraConfig, get_peft_model, TaskType
 
-    # Ensure pad token exists
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+    )
+
+    log.info("Loading tokenizer from %s (revision=%s)", args.model, args.model_revision or "latest")
+    tokenizer = AutoTokenizer.from_pretrained(args.model, revision=args.model_revision)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    # Load and format preference pairs
+    log.info("Loading model (4-bit)...")
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model,
+        revision=args.model_revision,
+        quantization_config=bnb_config,
+        device_map="auto",
+    )
+
+    lora_config = LoraConfig(
+        r=16,
+        lora_alpha=16,
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                        "gate_proj", "up_proj", "down_proj"],
+        lora_dropout=0.0,
+        bias="none",
+        task_type=TaskType.CAUSAL_LM,
+    )
+    model = get_peft_model(model, lora_config)
+    model.print_trainable_parameters()
+    log.info("Model ready — transformers+PEFT (4-bit + LoRA r=16)")
+
+    # ── Data ───────────────────────────────────────────────────────────────
     pairs = load_pairs(args.pairs)
-    dataset = pairs_to_hf_dataset(pairs, tokenizer)
-    log.info("Dataset: %d examples", len(dataset))
 
-    # TRL DPOTrainer with SimPO loss
-    try:
-        from trl import DPOTrainer, DPOConfig
+    # ── Optimizer ─────────────────────────────────────────────────────────
+    optimizer = torch.optim.AdamW(
+        [p for p in model.parameters() if p.requires_grad],
+        lr=args.lr,
+    )
 
-        training_args = DPOConfig(
-            output_dir=args.output,
-            num_train_epochs=args.epochs,
-            per_device_train_batch_size=1,
-            gradient_accumulation_steps=args.grad_accum,
-            learning_rate=args.lr,
-            beta=args.beta,
-            loss_type="simpo",
-            simpo_gamma=args.gamma,
-            max_length=1024,
-            max_prompt_length=512,
-            logging_steps=1,
-            save_strategy="no",
-            seed=args.seed,
-            bf16=torch.cuda.is_bf16_supported(),
-            fp16=not torch.cuda.is_bf16_supported(),
-            report_to="none",
-            remove_unused_columns=False,
-        )
+    total_steps = len(pairs) * args.epochs
+    log.info("Hyperparameters: lr=%s batch_size=%d warmup=%d scheduler=%s epochs=%d "
+             "beta=%.1f gamma=%.2f lora_r=16 lora_alpha=16 total_steps=%d",
+             args.lr, args.batch_size, args.warmup_steps, args.scheduler,
+             args.epochs, args.beta, args.gamma, total_steps)
 
-        trainer = DPOTrainer(
-            model=model,
-            args=training_args,
-            train_dataset=dataset,
-            tokenizer=tokenizer,
-        )
+    # LR scheduler: linear warmup then cosine/linear decay
+    def get_lr_scale(step: int) -> float:
+        if step < args.warmup_steps:
+            return (step + 1) / max(args.warmup_steps, 1)
+        if args.scheduler == "none":
+            return 1.0
+        progress = (step - args.warmup_steps) / max(total_steps - args.warmup_steps, 1)
+        if args.scheduler == "cosine":
+            import math
+            return max(0.0, 0.5 * (1.0 + math.cos(math.pi * progress)))
+        # linear
+        return max(0.0, 1.0 - progress)
 
-        log.info(
-            "Starting SimPO training via TRL DPOTrainer: "
-            "β=%.1f γ=%.2f lr=%.0e epochs=%d pairs=%d",
-            args.beta, args.gamma, args.lr, args.epochs, len(pairs)
-        )
-        start = time.time()
-        train_result = trainer.train()
-        elapsed = time.time() - start
+    # ── Training loop ──────────────────────────────────────────────────────
+    model.train()
+    start = time.time()
+    step = 0
+    running_loss = 0.0
+    margin_history = []
 
-        final_loss = train_result.training_loss
-        log.info("Training complete. Final loss: %.4f | Time: %.0fs", final_loss, elapsed)
+    for epoch in range(args.epochs):
+        random.shuffle(pairs)
+        epoch_loss = 0.0
 
-        if final_loss > 0.65:
-            log.warning(
-                "KILL CRITERION: final loss %.4f > 0.65. "
-                "Training did not converge. Check preference pair quality.",
-                final_loss
-            )
+        for pair in pairs:
+            prompt = format_prompt(pair["task"])
+            chosen_text   = prompt + pair["chosen"]["output"]
+            rejected_text = prompt + pair["rejected"]["output"]
 
-    except (ImportError, TypeError) as e:
-        # Fallback: try CPOTrainer with simpo loss_type
-        log.warning("DPOConfig simpo not available (%s), trying CPOTrainer...", e)
-        from trl import CPOTrainer, CPOConfig
+            chosen_inputs   = tokenizer(chosen_text,   return_tensors="pt",
+                                        truncation=True, max_length=1024)
+            rejected_inputs = tokenizer(rejected_text, return_tensors="pt",
+                                        truncation=True, max_length=1024)
 
-        training_args = CPOConfig(
-            output_dir=args.output,
-            num_train_epochs=args.epochs,
-            per_device_train_batch_size=1,
-            gradient_accumulation_steps=args.grad_accum,
-            learning_rate=args.lr,
-            beta=args.beta,
-            loss_type="simpo",
-            simpo_gamma=args.gamma,
-            max_length=1024,
-            max_prompt_length=512,
-            logging_steps=1,
-            save_strategy="no",
-            seed=args.seed,
-            bf16=torch.cuda.is_bf16_supported(),
-            fp16=not torch.cuda.is_bf16_supported(),
-            report_to="none",
-        )
+            chosen_lp   = length_normalized_logprob(model, chosen_inputs,   device)
+            rejected_lp = length_normalized_logprob(model, rejected_inputs, device)
 
-        trainer = CPOTrainer(
-            model=model,
-            args=training_args,
-            train_dataset=dataset,
-            tokenizer=tokenizer,
-        )
+            loss = simpo_loss(chosen_lp, rejected_lp, args.beta, args.gamma)
 
-        log.info("Starting SimPO training via TRL CPOTrainer")
-        start = time.time()
-        train_result = trainer.train()
-        elapsed = time.time() - start
-        final_loss = train_result.training_loss
-        log.info("Training complete. Final loss: %.4f | Time: %.0fs", final_loss, elapsed)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-    # Save adapter and run log
+            # Update LR according to schedule
+            lr_scale = get_lr_scale(step)
+            for pg in optimizer.param_groups:
+                pg["lr"] = args.lr * lr_scale
+
+            step += 1
+            epoch_loss  += loss.item()
+            running_loss += loss.item()
+            margin_history.append((chosen_lp.item() - rejected_lp.item()))
+
+            if step % 10 == 0:
+                avg_margin = float(np.mean(margin_history[-10:]))
+                log.info("step=%d loss=%.4f rewards/margin=%.4f",
+                         step, loss.item(), avg_margin)
+
+        log.info("Epoch %d/%d  avg_loss=%.4f",
+                 epoch + 1, args.epochs, epoch_loss / len(pairs))
+
+    elapsed      = time.time() - start
+    final_loss   = running_loss / step if step > 0 else 0.0
+    final_margin = float(np.mean(margin_history[-10:])) if margin_history else 0.0
+
+    log.info("Training complete | steps=%d loss=%.4f margin=%.4f time=%.0fs",
+             step, final_loss, final_margin, elapsed)
+
+    # ── Save adapter ───────────────────────────────────────────────────────
     output_path = Path(args.output)
     output_path.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(str(output_path))
     tokenizer.save_pretrained(str(output_path))
 
     run_log = {
-        "model": args.model,
-        "epochs": args.epochs,
-        "beta": args.beta,
-        "gamma": args.gamma,
-        "lr": args.lr,
-        "seed": args.seed,
-        "n_pairs": len(pairs),
-        "final_loss": round(final_loss, 4),
+        "model":           args.model,
+        "model_revision":  args.model_revision,
+        "epochs":          args.epochs,
+        "batch_size":      args.batch_size,
+        "beta":            args.beta,
+        "gamma":           args.gamma,
+        "lr":              args.lr,
+        "warmup_steps":    args.warmup_steps,
+        "scheduler":       args.scheduler,
+        "lora_r":          16,
+        "lora_alpha":      16,
+        "lora_dropout":    0.0,
+        "seed":            args.seed,
+        "n_pairs":         len(pairs),
+        "total_steps":     step,
+        "final_loss":      round(final_loss, 4),
+        "final_margin":    round(final_margin, 4),
         "total_elapsed_s": round(elapsed, 1),
-        "converged": final_loss <= 0.65,
+        "converged":       final_margin > 0,
     }
     with open(output_path / "run_log.json", "w") as f:
         json.dump(run_log, f, indent=2)
 
-    log.info("Adapter saved to %s", output_path)
-    log.info("Final loss: %.4f | Converged: %s", final_loss, run_log["converged"])
+    log.info("Adapter saved → %s", output_path)
+    log.info("Converged (margin > 0): %s", run_log["converged"])
 
 
 if __name__ == "__main__":

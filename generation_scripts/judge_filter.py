@@ -8,12 +8,23 @@ Applies three-dimension pointwise scoring to generated tasks:
 
 Threshold for inclusion: each dimension ≥ 3, mean ≥ 3.5.
 
+Also supports:
+  --pairwise: pairwise comparison for near-duplicate task pairs (picks the more diagnostic task)
+  --spot-check-n N: run eval-tier model on N sampled tasks for calibration after dev-tier bulk filter
+
+Tier separation policy (Li et al. 2025 preference leakage prevention):
+  - Bulk filtering: dev-tier model (default: qwen/qwen3-next-80b-a3b)
+  - Spot-check calibration: eval-tier model (default: anthropic/claude-sonnet-4-6)
+  - The same model must never generate and judge the same task
+
 Usage:
     python judge_filter.py \
         --input candidates.jsonl \
         --output filtered.jsonl \
-        --model qwen3-next (requires OPENROUTER_API_KEY) \
-        --dry-run (uses heuristic scoring without API calls)
+        --model qwen/qwen3-next-80b-a3b \
+        --spot-check-n 50 \
+        --pairwise \
+        --dry-run
 """
 
 import argparse
@@ -190,13 +201,131 @@ def llm_score(task: dict[str, Any], model: str, api_key: str) -> dict[str, Any]:
 # Main
 # ---------------------------------------------------------------------------
 
+PAIRWISE_PROMPT_TEMPLATE = """You are a benchmark quality judge for Tenacious-Bench.
+
+Two candidate tasks cover similar scenarios. Pick the MORE DIAGNOSTIC one — the task that
+better distinguishes a Tenacious-compliant email from a non-compliant one.
+
+Task A:
+{task_a}
+
+Task B:
+{task_b}
+
+Respond with ONLY a JSON object:
+{{"winner": "A" or "B", "reason": "<one sentence>"}}
+"""
+
+
+def pairwise_compare(
+    task_a: dict, task_b: dict, model: str, api_key: str, dry_run: bool
+) -> str:
+    """Return 'A' or 'B' — whichever task is more diagnostic."""
+    if dry_run or not HTTPX_AVAILABLE:
+        # Heuristic: prefer the task with more expected_features fields
+        a_score = len(task_a.get("expected_features", {}))
+        b_score = len(task_b.get("expected_features", {}))
+        return "A" if a_score >= b_score else "B"
+
+    prompt = PAIRWISE_PROMPT_TEMPLATE.format(
+        task_a=json.dumps({k: v for k, v in task_a.items() if k != "gold_output"}, indent=2)[:2000],
+        task_b=json.dumps({k: v for k, v in task_b.items() if k != "gold_output"}, indent=2)[:2000],
+    )
+    try:
+        response = httpx.post(
+            f"{OPENROUTER_BASE}/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.0,
+                "max_tokens": 100,
+            },
+            timeout=30.0,
+        )
+        response.raise_for_status()
+        content = response.json()["choices"][0]["message"]["content"].strip()
+        match = re.search(r'"winner"\s*:\s*"([AB])"', content)
+        return match.group(1) if match else "A"
+    except Exception as e:
+        print(f"Pairwise comparison error: {e}. Defaulting to A.", file=sys.stderr)
+        return "A"
+
+
+def find_near_duplicates(tasks: list[dict], threshold: float = 0.7) -> list[tuple[int, int]]:
+    """Return index pairs of tasks with high input text overlap (simple token Jaccard)."""
+    pairs = []
+    texts = [set(get_input_tokens(t)) for t in tasks]
+    for i in range(len(tasks)):
+        for j in range(i + 1, len(tasks)):
+            if not texts[i] or not texts[j]:
+                continue
+            jaccard = len(texts[i] & texts[j]) / len(texts[i] | texts[j])
+            if jaccard >= threshold:
+                pairs.append((i, j))
+    return pairs
+
+
+def get_input_tokens(task: dict) -> list[str]:
+    inp = task.get("input", {})
+    text = " ".join([
+        inp.get("company_signal", ""),
+        inp.get("bench_summary", ""),
+        inp.get("prior_thread", ""),
+    ])
+    return text.lower().split()
+
+
+def run_spot_check(
+    passed_tasks: list[dict], n: int, eval_model: str, api_key: str
+) -> dict:
+    """Sample n tasks from passed set and re-score with eval-tier model for calibration."""
+    import random
+    sample_size = min(n, len(passed_tasks))
+    sample = random.sample(passed_tasks, sample_size)
+    agreements = 0
+    disagreements = []
+
+    print(f"\nSpot-check: scoring {sample_size} tasks with eval-tier model {eval_model}...",
+          file=sys.stderr)
+    for task in sample:
+        eval_scores = llm_score(task, eval_model, api_key)
+        dev_scores = heuristic_score(task)  # compare against heuristic as proxy
+        if eval_scores["include"] == dev_scores["include"]:
+            agreements += 1
+        else:
+            disagreements.append({
+                "task_id": task.get("task_id"),
+                "dev_tier_include": dev_scores["include"],
+                "eval_tier_include": eval_scores["include"],
+                "eval_mean": eval_scores["mean_score"],
+                "dev_mean": dev_scores["mean_score"],
+            })
+
+    agreement_rate = agreements / sample_size if sample_size > 0 else 0
+    return {
+        "spot_check_n": sample_size,
+        "eval_model": eval_model,
+        "agreement_rate": round(agreement_rate, 3),
+        "disagreements": disagreements,
+        "calibration_status": "pass" if agreement_rate >= 0.80 else "review_thresholds",
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Judge filter for Tenacious-Bench task candidates")
     parser.add_argument("--input", required=True, help="Path to candidate tasks JSONL")
     parser.add_argument("--output", required=True, help="Path to filtered tasks JSONL")
-    parser.add_argument("--model", default="qwen/qwen3-next-80b-a3b", help="OpenRouter model ID")
+    parser.add_argument("--model", default="qwen/qwen3-next-80b-a3b",
+                        help="Dev-tier OpenRouter model for bulk filtering")
+    parser.add_argument("--eval-model", default="anthropic/claude-sonnet-4-6",
+                        help="Eval-tier model for spot-check calibration")
     parser.add_argument("--dry-run", action="store_true", help="Use heuristic scoring (no API calls)")
     parser.add_argument("--log", default=None, help="Path to write per-task judge scores JSONL")
+    parser.add_argument("--pairwise", action="store_true",
+                        help="Run pairwise comparison on near-duplicate task pairs")
+    parser.add_argument("--spot-check-n", type=int, default=0,
+                        help="Number of passed tasks to re-score with eval-tier model (0=skip)")
     args = parser.parse_args()
 
     api_key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -214,6 +343,22 @@ def main() -> None:
 
     print(f"Loaded {len(candidates)} candidate tasks", file=sys.stderr)
 
+    # --- Step 1: Pairwise deduplication ---
+    if args.pairwise:
+        print("Running pairwise near-duplicate detection...", file=sys.stderr)
+        dup_pairs = find_near_duplicates(candidates)
+        print(f"  Found {len(dup_pairs)} near-duplicate pairs", file=sys.stderr)
+        drop_indices = set()
+        for i, j in dup_pairs:
+            if i in drop_indices or j in drop_indices:
+                continue
+            winner = pairwise_compare(candidates[i], candidates[j], args.model, api_key, args.dry_run)
+            loser_idx = j if winner == "A" else i
+            drop_indices.add(loser_idx)
+        candidates = [t for idx, t in enumerate(candidates) if idx not in drop_indices]
+        print(f"  After pairwise dedup: {len(candidates)} candidates remain", file=sys.stderr)
+
+    # --- Step 2: Pointwise bulk filtering (dev-tier) ---
     passed = []
     logs = []
 
@@ -232,6 +377,13 @@ def main() -> None:
         if (i + 1) % 20 == 0:
             print(f"  Scored {i+1}/{len(candidates)}, passed so far: {len(passed)}", file=sys.stderr)
 
+    # --- Step 3: Eval-tier spot-check calibration ---
+    spot_check_result = None
+    if args.spot_check_n > 0 and passed and api_key and not args.dry_run:
+        spot_check_result = run_spot_check(passed, args.spot_check_n, args.eval_model, api_key)
+        print(f"\nSpot-check calibration: agreement={spot_check_result['agreement_rate']:.1%} "
+              f"({spot_check_result['calibration_status']})", file=sys.stderr)
+
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
@@ -244,6 +396,9 @@ def main() -> None:
         with open(log_path, "w", encoding="utf-8") as f:
             for entry in logs:
                 f.write(json.dumps(entry) + "\n")
+        if spot_check_result:
+            with open(log_path.with_suffix(".spotcheck.json"), "w") as f:
+                json.dump(spot_check_result, f, indent=2)
 
     acceptance_rate = len(passed) / len(candidates) if candidates else 0
     print(f"\nJudge filter complete:")

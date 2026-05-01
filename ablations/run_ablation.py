@@ -163,9 +163,15 @@ def main():
     parser.add_argument(
         "--baseline",
         required=True,
-        choices=["week10", "prompt-only"],
-        help="week10: use baseline_outputs.jsonl; prompt-only: generate from backbone",
+        choices=["week10", "prompt-only", "tau2bench"],
+        help=(
+            "week10: Delta A — trained judge vs Week 10 baseline outputs; "
+            "prompt-only: Delta B — trained judge vs backbone with no adapter; "
+            "tau2bench: Delta C — informational reference only, no re-run (uses --tau2bench-score)"
+        ),
     )
+    parser.add_argument("--tau2bench-score", type=float, default=0.387,
+                        help="Week 10 pass@1 on tau2-bench retail (informational, not re-run)")
     parser.add_argument("--baseline-outputs", default="training_data/baseline_outputs.jsonl",
                         help="Baseline agent outputs (required if --baseline week10)")
     parser.add_argument("--output", required=True, help="Results JSON file")
@@ -218,13 +224,48 @@ def main():
                     entry = json.loads(line)
                     baseline_outputs[entry["task_id"]] = entry["output"]
 
+    # Delta C: informational τ²-Bench reference — no re-run
+    if args.baseline == "tau2bench":
+        delta_c = {
+            "delta": "delta_c",
+            "description": "Informational τ²-Bench retail pass@1 from Week 10 — not re-run this week",
+            "tau2bench_pass_at_1": args.tau2bench_score,
+            "tau2bench_ci": [0.341, 0.433],
+            "note": (
+                "τ²-Bench retail measures generic task completion on shopping tasks. "
+                "Tenacious-Bench held-out measures domain-specific failures (bench over-commitment, "
+                "tone compliance, signal grounding). The two benchmarks are not directly comparable. "
+                "τ²-Bench score reused from Week 10 per cost-discipline policy."
+            ),
+        }
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        existing = {}
+        if args.append and output_path.exists():
+            with open(output_path) as f:
+                existing = json.load(f)
+        existing.setdefault("delta_c_reference", delta_c)
+        with open(output_path, "w") as f:
+            json.dump(existing, f, indent=2)
+        log.info("Delta C reference written (informational only, no model calls)")
+        return
+
+    # Cost-Pareto constants (OpenRouter pricing as of 2026-05-01)
+    COST_PER_INPUT_TOKEN = 0.27 / 1_000_000   # DeepSeek V3.2 input
+    COST_PER_OUTPUT_TOKEN = 1.10 / 1_000_000  # DeepSeek V3.2 output
+
     delta_label = "delta_a" if args.baseline == "week10" else "delta_b"
     results = []
     traces = []
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_latency_s = 0.0
 
     for task in held_out_tasks:
         task_id = task["task_id"]
         log.info("Evaluating %s ...", task_id)
+
+        task_start = time.time()
 
         # Get baseline output
         if args.baseline == "week10":
@@ -235,17 +276,27 @@ def main():
         else:
             baseline_output = generate_prompt_only_output(task, model, tokenizer, device)
 
+        # Approximate token counts for Cost-Pareto
+        input_text = json.dumps(task) + baseline_output
+        approx_input_tokens = len(input_text.split())
+        approx_output_tokens = 80  # judge output is ~80 tokens
+
         # Score baseline with deterministic evaluator
         baseline_scores = score_with_deterministic(task, baseline_output)
 
         # Score with trained judge
         judge_scores = score_with_judge_model(task, baseline_output, model, tokenizer, device)
 
-        # Trained judge on a fresh generation (to test if the judge catches what baseline misses)
-        # For ablation: we measure whether the trained judge scores the baseline output differently
-        # from the deterministic evaluator (Delta A measures judgment calibration)
+        task_elapsed = time.time() - task_start
+        total_latency_s += task_elapsed
+        total_input_tokens += approx_input_tokens
+        total_output_tokens += approx_output_tokens
 
         lift = round(judge_scores["final_score"] - baseline_scores["final_score"], 3)
+        task_cost = (
+            approx_input_tokens * COST_PER_INPUT_TOKEN
+            + approx_output_tokens * COST_PER_OUTPUT_TOKEN
+        )
 
         result = {
             "task_id": task_id,
@@ -256,13 +307,15 @@ def main():
             "score_lift": lift,
             "baseline_scores": baseline_scores.get("scores", {}),
             "judge_scores": judge_scores.get("scores", {}),
+            "latency_s": round(task_elapsed, 2),
+            "approx_cost_usd": round(task_cost, 6),
         }
         results.append(result)
 
         trace = {
             "task_id": task_id,
             "delta": delta_label,
-            "baseline_output": baseline_output[:500],  # truncated for log
+            "baseline_output": baseline_output[:500],
             "deterministic_score": baseline_scores["final_score"],
             "judge_score": judge_scores["final_score"],
             "reasoning": judge_scores.get("reasoning", ""),
@@ -288,16 +341,33 @@ def main():
     losses = sum(1 for r in results if r["score_lift"] < 0)
     ties = len(results) - wins - losses
 
+    # Cost-Pareto summary
+    n = len(results)
+    avg_latency = total_latency_s / n if n else 0
+    total_cost = total_input_tokens * COST_PER_INPUT_TOKEN + total_output_tokens * COST_PER_OUTPUT_TOKEN
+    cost_per_task = total_cost / n if n else 0
+    log.info("Cost-Pareto | total_cost=$%.4f cost_per_task=$%.6f avg_latency=%.2fs",
+             total_cost, cost_per_task, avg_latency)
+
     output_data = {
         "results": all_results,
         "summary": {
             delta_label: {
-                "n_tasks": len(results),
+                "n_tasks": n,
                 "avg_score_lift": round(avg_lift, 4),
                 "wins": wins,
                 "losses": losses,
                 "ties": ties,
-                "win_rate": round(wins / len(results), 3) if results else 0,
+                "win_rate": round(wins / n, 3) if n else 0,
+                "cost_pareto": {
+                    "total_input_tokens": total_input_tokens,
+                    "total_output_tokens": total_output_tokens,
+                    "total_cost_usd": round(total_cost, 4),
+                    "cost_per_task_usd": round(cost_per_task, 6),
+                    "avg_latency_s": round(avg_latency, 2),
+                    "total_latency_s": round(total_latency_s, 1),
+                    "pricing_model": "DeepSeek V3.2 via OpenRouter ($0.27/1M input, $1.10/1M output)",
+                },
             }
         },
     }
