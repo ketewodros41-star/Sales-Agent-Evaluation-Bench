@@ -1,0 +1,13 @@
+{
+  "model": "unsloth/Qwen2.5-1.5B-Instruct",
+  "epochs": 3,
+  "beta": 2.0,
+  "gamma": 0.5,
+  "lr": 5e-05,
+  "seed": 42,
+  "n_pairs": 69,
+  "final_loss": 0.5165,
+  "final_margin": 3.9813,
+  "total_elapsed_s": 268.8,
+  "converged": true
+}

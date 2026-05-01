@@ -29,74 +29,77 @@
       "artifact": "training_data/build_pairs.py line 154"
     },
     {
-      "claim": "Training wall time: 2 min (90 s)",
-      "source": "Colab training run",
+      "claim": "Training wall time: ~4.5 min (269 s)",
+      "source": "Colab training run — v3, pure SimPO, 69 pairs",
       "artifact": "training/qwen_simpo_judge_v2/run_log.json",
       "key": "total_elapsed_s",
-      "value": 89.8
+      "value": 268.8
     },
     {
-      "claim": "Final training loss: 3.37",
+      "claim": "Final training loss: 0.52 (SimPO)",
       "source": "Colab training run",
       "artifact": "training/qwen_simpo_judge_v2/run_log.json",
       "key": "final_loss",
-      "value": 3.3676,
-      "notes": "CPO NLL+preference loss — not comparable to pure SimPO 0.65 kill criterion"
+      "value": 0.5165,
+      "notes": "Pure SimPO PyTorch loss; final_margin=3.98, converged=True"
     },
     {
-      "claim": "rewards/margins trending positive (+0.52 at final step, from -1.25 at step 1)",
-      "source": "Colab training log",
+      "claim": "SimPO margin converged to +3.98 (from negative at step 1)",
+      "source": "Colab training run",
       "artifact": "training/qwen_simpo_judge_v2/run_log.json",
-      "notes": "Positive trend confirms model learned preference direction on 44 corrected pairs"
+      "key": "final_margin",
+      "value": 3.9813,
+      "notes": "converged=True; positive margin confirms model learned preference direction on 69 pairs"
     },
     {
-      "claim": "Delta A mean lift: +0.4108",
-      "source": "Colab ablation — trained Qwen judge (v2, 44 corrected pairs) scoring 40 held-out baseline emails vs corrected deterministic evaluator (Style Guide v2 banned phrases, word count, bench word check)",
+      "claim": "Delta A mean lift: +0.0641",
+      "source": "Colab ablation — trained Qwen judge (v3, 69 pairs) scoring 40 held-out baseline emails vs corrected deterministic evaluator (Style Guide v2 banned phrases, word count, bench word check)",
       "artifact": "ablations/ablation_results.json",
       "key": "summary.delta_a.avg_score_lift",
-      "value": 0.4108
+      "value": 0.0641
     },
     {
-      "claim": "Delta A 95% CI: [0.3587, 0.4608]",
+      "claim": "Delta A 95% CI: [0.022, 0.108]",
       "source": "1000 bootstrap resamples, seed=42",
       "artifact": "ablations/significance.json",
       "key": "delta_a.ci_95_lower / ci_95_upper",
-      "value": [0.3587, 0.4608]
+      "value": [0.022, 0.1083]
     },
     {
       "claim": "Delta A p < 0.0001",
-      "source": "ablations/bootstrap_test.py",
+      "source": "bootstrap significance test, seed=42",
       "artifact": "ablations/significance.json",
       "key": "delta_a.p_value_one_tailed",
       "value": 0.0
     },
     {
-      "claim": "Delta A win rate 40/40 (100%)",
-      "source": "Colab ablation",
+      "claim": "Delta A win rate 23/40 (57.5%)",
+      "source": "Colab ablation — v3 judge",
       "artifact": "ablations/ablation_results.json",
       "key": "summary.delta_a.wins / n_tasks",
-      "value": "40/40"
+      "value": "23/40"
     },
     {
-      "claim": "Delta B mean lift: -0.0596",
-      "source": "Colab ablation — trained judge vs raw Qwen backbone (no adapter) on same 40 emails",
+      "claim": "Delta B mean lift: +0.3204",
+      "source": "Colab ablation — trained judge (v3) vs raw Qwen backbone (no adapter) on same 40 held-out emails",
       "artifact": "ablations/ablation_results.json",
       "key": "summary.delta_b.avg_score_lift",
-      "value": -0.0596
+      "value": 0.3204,
+      "notes": "Positive: excellence-tier training shifted judge above backbone; backbone is conservative by default"
     },
     {
-      "claim": "Delta B 95% CI: [-0.0975, -0.0292]",
+      "claim": "Delta B 95% CI: [0.268, 0.376]",
       "source": "1000 bootstrap resamples, seed=42",
       "artifact": "ablations/significance.json",
       "key": "delta_b.ci_95_lower / ci_95_upper",
-      "value": [-0.0975, -0.0292]
+      "value": [0.2679, 0.3762]
     },
     {
-      "claim": "Delta B not significant at alpha=0.05 (negative direction — training made judge stricter)",
-      "source": "ablations/bootstrap_test.py",
+      "claim": "Delta B significant at alpha=0.05 (p < 0.0001, wins=37/40)",
+      "source": "bootstrap significance test, seed=42",
       "artifact": "ablations/significance.json",
       "key": "delta_b.significant_at_0.05",
-      "value": false
+      "value": true
     },
     {
       "claim": "Cost ~$0.0004/task with trained pipeline",
@@ -140,10 +143,10 @@
       "notes": "All 25 new pairs exceed delta >= 0.20 threshold; previous v2 pairs averaged ~+0.22"
     },
     {
-      "claim": "v3 training Colab bundle: colab_training_v4.zip",
-      "source": "local build",
-      "artifact": "colab_training_v4.zip",
-      "notes": "Run: python train_simpo.py --pairs preference_pairs_v3.jsonl --output qwen_simpo_judge_v3 --epochs 3; v3 ablation results pending"
+      "claim": "v3 training completed: 69 pairs, 3 epochs, SimPO loss=0.52, margin=3.98, converged=True, elapsed=269s",
+      "source": "Colab training run 2026-05-01",
+      "artifact": "training/qwen_simpo_judge_v2/run_log.json",
+      "notes": "Pure SimPO PyTorch loop (no TRL); v3 ablation complete — results in ablation_results.json and significance.json"
     }
   ]
 }

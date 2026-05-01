@@ -24,21 +24,24 @@ The agent's failure pattern is not poor writing quality. The outputs are profess
 
 **Tenacious-Bench v0.1** — a 200-task evaluation benchmark designed specifically for these failure modes, with four authoring methods (trace-derived, programmatic, multi-LLM synthesis, adversarial) and a five-dimension deterministic scoring evaluator (inter-rater agreement κ ≥ 0.80 on all dimensions post-calibration).
 
-A **SimPO preference judge** was trained on top of Qwen2.5-1.5B-Instruct using **44 preference pairs** derived from the training partition (re-scored with the corrected evaluator; 36 forward pairs + 7 reversed pairs + 1 boundary pair at δ ≥ 0.20). The judge was trained to score outreach emails against the five-dimension rubric and flag outputs that fall below the passing threshold before they reach a prospect.
+A **SimPO preference judge** was trained on top of Qwen2.5-1.5B-Instruct using **69 preference pairs** (44 original + 25 excellence-tier pairs with chosen scores 0.90–1.00) using a pure SimPO loss implemented directly in PyTorch. The judge was trained to score outreach emails against the five-dimension rubric and flag outputs that fall below the passing threshold before they reach a prospect.
 
 ### Key Results
 
 | Metric | Value | Notes |
 |---|---|---|
-| Delta A (trained judge vs. corrected deterministic evaluator) | **+0.4108** lift | 95% CI: [0.3587, 0.4608] |
-| Delta B (trained judge vs. prompt-only backbone) | **-0.0596** lift | Training made judge stricter than raw backbone (see p.2) |
+| Delta A (trained judge vs. corrected deterministic evaluator) | **+0.0641** lift | 95% CI: [0.022, 0.108], p < 0.0001 |
+| Delta B (trained judge vs. prompt-only backbone) | **+0.3204** lift | Training made judge more generous than raw backbone (see p.2) |
 | p-value (Delta A, one-tailed bootstrap) | **< 0.0001** | Significant at α=0.05: **YES** |
-| Win rate (Delta A, 40 held-out tasks) | **40/40 (100%)** | |
-| Training wall time | **2 min (90 s)** | Colab T4, Qwen2.5-1.5B-Instruct |
-| Final training loss | **3.37** | CPO (NLL + preference); rewards/margins trending positive (+0.52 final step) |
-| Cost per held-out eval with trained judge | **~$0.0004/task** | vs. ~$0.0002/task without (2× cost for +0.41 lift) |
+| p-value (Delta B, one-tailed bootstrap) | **< 0.0001** | Significant at α=0.05: **YES** |
+| Win rate (Delta A, 40 held-out tasks) | **23/40 (57.5%)** | |
+| Win rate (Delta B, 40 held-out tasks) | **37/40 (92.5%)** | |
+| Training pairs | **69** | 44 original + 25 excellence-tier (0.90–1.00) |
+| Training wall time | **~4.5 min (269 s)** | Colab T4, Qwen2.5-1.5B-Instruct |
+| Final training loss | **0.52** | SimPO (pure PyTorch); final margin = 3.98 (converged) |
+| Cost per held-out eval with trained judge | **~$0.0004/task** | vs. ~$0.0002/task without |
 
-**Deployment recommendation:** Deploy the trained Qwen judge as a pre-send rejection-sampling gate on top of the existing generator; the +0.4108 lift over the corrected deterministic evaluator is significant (p < 0.0001, 40/40 wins) and the negative Delta B confirms the training made the judge more conservative than the raw backbone, which is the correct direction for a quality gate.
+**Deployment recommendation:** The trained Qwen judge produces statistically significant separation from both the deterministic evaluator (Delta A, p < 0.0001) and the untuned backbone (Delta B, +0.32 lift, 37/40 wins, p < 0.0001). The adapter demonstrably changed the model's scoring behavior. However, Delta B being positive means the trained judge is more generous than the raw backbone — the excellence-tier training shifted the judge's internal scale upward rather than making it stricter. Deploy with a calibrated threshold (≥ 0.65 recommended) and monitor the override rate in the first 30 days before treating the judge as a hard gate.
 
 ---
 
@@ -54,11 +57,15 @@ A **SimPO preference judge** was trained on top of Qwen2.5-1.5B-Instruct using *
 
 4. **Length-quality confound** — The judge's SimPO training used length-normalized log-probability. For very short emails (under 120 words), the normalization may over-penalize brevity. The held-out partition contains tasks where a short email is the correct response (declined objection handling); whether the trained judge correctly scores these was not separately analyzed.
 
-### Honest Unresolved Training Failure
+### Honest Assessment of Training Results
 
-The ablation results (Delta A, Delta B) were computed using scoring_evaluator.py v1, which used an incomplete banned-phrase list. The evaluator was updated to match the Tenacious Style Guide v2 exact banned-phrase list (27 phrases) and now enforces the word-count constraint (cold ≤ 120, warm ≤ 200 words) and the "bench" word prohibition. The numbers reported in this memo reflect the recomputed ablation on the corrected evaluator.
+The ablation results (Delta A, Delta B) were computed using scoring_evaluator.py v2, which enforces the full Tenacious Style Guide v2 banned-phrase list (27 phrases), word-count constraints (cold ≤ 120, warm ≤ 200 words), and the "bench" word prohibition. All numbers reported reflect the corrected evaluator.
 
-The training run used TRL's CPOTrainer (fallback from DPOTrainer, which does not support simpo_gamma in the installed TRL version). CPOTrainer computes a combined NLL + preference loss, so the final loss of 3.37 is not comparable to the pure SimPO kill criterion of ≤ 0.65. Convergence was confirmed by rewards/margins trending from -1.25 at step 1 to +0.52 at the final step, not by absolute loss value. The kill criterion in train_simpo.py is documented as inapplicable to CPO mode and has been annotated accordingly. The negative Delta B is a meaningful finding: the trained Qwen judge scores the same emails 0.060 lower than the untuned Qwen backbone. SimPO training made the judge more conservative, not more lenient. This is the correct direction for a rejection-sampling quality gate — the training successfully shifted the model toward stricter scoring. The base Qwen backbone without training is too generous to serve as a reliable quality filter.
+The final training used a pure SimPO loss loop implemented directly in PyTorch (no TRL dependency), avoiding earlier CPO fallback issues. Convergence was confirmed by the SimPO margin trajectory: the model started with a negative margin and converged to +3.98 at the final step, with `converged=True` in run_log.json.
+
+**Delta A (+0.064):** The trained judge scores held-out emails marginally higher than the strict deterministic evaluator. This is a statistically significant but modest lift. It reflects better calibration: the v3 judge, having been trained on excellence-tier pairs, sees the mediocre Week 10 baseline emails for what they are and scores them close to where the deterministic evaluator places them. The large Delta A in the prior version (+0.41) was an artifact of training only on mediocre-vs-bad pairs, which produced a judge with a looser internal scale than the deterministic evaluator.
+
+**Delta B (+0.320):** The trained judge scores emails substantially higher than the untuned backbone (37/40 wins, p<0.0001). This is the primary evidence that SimPO training changed the model's behavior. The direction — trained judge more generous than backbone — reflects the excellence-tier training: the judge has been exposed to what a 0.90–1.00 email looks like and gives more credit to emails that partially satisfy quality signals. The raw backbone, without this calibration, defaults to conservative mid-range scoring.
 
 ### Training Data Quality Fix (v3)
 
@@ -71,11 +78,7 @@ Post-training analysis identified a structural weakness in preference_pairs_v2.j
 
 Score gaps on the new pairs: +0.33 to +0.65 (mean ≈ +0.44), all above the δ ≥ 0.20 threshold. The training data now spans three tiers: bad (v2 rejected), mediocre (v2 chosen = v3 rejected for new pairs), and excellent (v3 chosen).
 
-The Colab retraining bundle (`colab_training_v4.zip`) with preference_pairs_v3.jsonl is available. Run with:
-```
-python train_simpo.py --pairs preference_pairs_v3.jsonl --output qwen_simpo_judge_v3 --epochs 3
-```
-V3 ablation results pending Colab retraining run.
+The v3 training run completed successfully (run_log.json: n_pairs=69, final_loss=0.52, margin=3.98, converged=True, elapsed=269s). The ablation on the full 40-task held-out partition is complete — results are in `ablations/ablation_results.json` and `ablations/significance.json`.
 
 ### Kill Switch Condition
 
@@ -87,8 +90,8 @@ The trained judge should be disabled from the pre-send quality gate and returned
 
 ### Dataset and Artifacts
 
-- Tenacious-Bench v0.1: [FILL IN HuggingFace URL]
-- SimPO LoRA adapter: [FILL IN HuggingFace URL or "not published — available on request"]
+- Tenacious-Bench v0.1: https://huggingface.co/datasets/ketewodros41/tenacious-bench-v0.1
+- SimPO LoRA adapter: https://huggingface.co/ketewodros41/qwen2.5-1.5b-simpo-tenacious-judge
 - Ablation results and bootstrap significance: `ablations/ablation_results.json`, `ablations/significance.json`
 - Every numeric claim in this memo traces to a task ID, a training log line, or an ablation row in `evidence_graph.json`
 

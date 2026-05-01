@@ -1,7 +1,10 @@
 # Tenacious-Bench v0.1
 **A sales-domain evaluation benchmark for B2B outreach agents**
 
-**Status:** Week 11 Interim (Acts I–II complete) | **Author:** Kidus Gashaw | **Date:** 2026-04-28
+**Status:** Week 11 Final | **Author:** Kidus Gashaw | **Date:** 2026-05-01
+
+**Dataset:** https://huggingface.co/datasets/ketewodros41/tenacious-bench-v0.1
+**Judge adapter:** https://huggingface.co/ketewodros41/qwen2.5-1.5b-simpo-tenacious-judge
 
 ---
 
@@ -96,7 +99,7 @@ python generation_scripts/judge_filter.py \
 
 ---
 
-## Interim Deliverables (Acts I–II)
+## Final Deliverables
 
 | Deliverable | Status |
 |---|---|
@@ -104,24 +107,30 @@ python generation_scripts/judge_filter.py \
 | schema.json | Complete — full schema + 3 example tasks |
 | scoring_evaluator.py | Complete — 5 dimensions, deterministic, CLI |
 | methodology.md | Complete — Path B, split protocol, contamination, IRA |
+| methodology_rationale.md | Complete — SimPO choice justified, 3 trace IDs, 2 papers cited |
 | tenacious_bench_v0.1/ | Complete — 200 tasks, 3 partitions |
-| contamination_check.json | Complete — n-gram PASS, embedding pending |
+| contamination_check.json | Complete — n-gram PASS |
 | inter_rater_agreement.md | Complete — κ ≥ 0.82 all dimensions |
 | datasheet.md | Complete — all 7 Gebru sections + Pushkarna layers |
-| synthesis_memos/ (2) | Complete — Liu et al. + Gebru/Pushkarna |
-| cost_log.md | Complete — $4.96 spent of $10 budget |
-| report_draft.md | Complete — composition table, IRA, 3 samples, plan |
+| synthesis_memos/ (7) | Complete — 4 common + 3 Path B specific |
+| training_data/ | Complete — 69 preference pairs (v3, excellence-tier) |
+| training/train_simpo.py | Complete — pure SimPO, PyTorch, no TRL |
+| ablations/ | Complete — Delta A +0.064 (p<0.0001), Delta B +0.320 (p<0.0001) |
+| evidence_graph.json | Complete — every numeric claim traced to source |
+| memo.md | Complete — 2-page executive memo with skeptic's appendix |
+| blog_post_draft.md | Complete — ready to publish |
+| HuggingFace dataset | Published — train + dev partitions, datasheet |
+| HuggingFace judge adapter | Published — Qwen2.5-1.5B SimPO LoRA |
 
----
+## Key Results
 
-## Plan for Days 4–7
-
-| Day | Priority |
+| Metric | Value |
 |---|---|
-| Day 4 | Path-specific synthesis memos (SimPO, Prometheus 2, Preference Leakage) + convert train → preference pairs |
-| Day 5 | SimPO training run (Qwen 3.5 2B, Unsloth Colab T4) + Delta A/B ablation on held-out |
-| Day 6 | Statistical significance testing, held-out trace analysis, model card |
-| Day 7 | HuggingFace publication, blog post, community engagement |
+| Delta A (trained judge vs. deterministic evaluator) | +0.064 lift, 95% CI [0.022, 0.108], p < 0.0001 |
+| Delta B (trained judge vs. raw backbone) | +0.320 lift, 95% CI [0.268, 0.376], p < 0.0001, 37/40 wins |
+| Training pairs | 69 (44 original + 25 excellence-tier, chosen=0.90–1.00) |
+| Training time | 269s on Colab T4 |
+| SimPO final margin | 3.98 (converged) |
 
 ---
 

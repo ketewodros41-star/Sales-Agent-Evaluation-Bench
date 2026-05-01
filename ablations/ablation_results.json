@@ -3,580 +3,660 @@
     {
       "task_id": "tb_held_0001",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4667,
-      "score_lift": 0.5333
+      "judge_score": 0.4667,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0002",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.65,
+      "score_lift": 0.0833
     },
     {
       "task_id": "tb_held_0003",
       "delta": "delta_a",
-      "judge_score": 0.8,
+      "baseline_type": "week10",
       "deterministic_score": 0.2167,
-      "score_lift": 0.5833
+      "judge_score": 0.65,
+      "score_lift": 0.4333
     },
     {
       "task_id": "tb_held_0004",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4,
-      "score_lift": 0.6
+      "judge_score": 0.4667,
+      "score_lift": 0.0667
     },
     {
       "task_id": "tb_held_0005",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.65,
+      "score_lift": 0.1167
     },
     {
       "task_id": "tb_held_0006",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.7333,
+      "score_lift": 0.1666
     },
     {
       "task_id": "tb_held_0007",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.5333,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0008",
       "delta": "delta_a",
-      "judge_score": 0.6667,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.1
+      "judge_score": 0.5333,
+      "score_lift": -0.0334
     },
     {
       "task_id": "tb_held_0009",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4667,
-      "score_lift": 0.5333
+      "judge_score": 0.5333,
+      "score_lift": 0.0666
     },
     {
       "task_id": "tb_held_0010",
       "delta": "delta_a",
-      "judge_score": 0.7833,
+      "baseline_type": "week10",
       "deterministic_score": 0.4667,
-      "score_lift": 0.3166
+      "judge_score": 0.5333,
+      "score_lift": 0.0666
     },
     {
       "task_id": "tb_held_0011",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.5333,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0012",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.7333,
+      "score_lift": 0.2
     },
     {
       "task_id": "tb_held_0013",
       "delta": "delta_a",
-      "judge_score": 0.8,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.2333
+      "judge_score": 0.4667,
+      "score_lift": -0.1
     },
     {
       "task_id": "tb_held_0014",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.5333,
+      "score_lift": -0.0334
     },
     {
       "task_id": "tb_held_0015",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4,
-      "score_lift": 0.6
+      "judge_score": 0.65,
+      "score_lift": 0.25
     },
     {
       "task_id": "tb_held_0016",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.5333,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0017",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.2167,
-      "score_lift": 0.7833
+      "judge_score": 0.5333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0018",
       "delta": "delta_a",
-      "judge_score": 0.65,
+      "baseline_type": "week10",
       "deterministic_score": 0.25,
-      "score_lift": 0.4
+      "judge_score": 0.4667,
+      "score_lift": 0.2167
     },
     {
       "task_id": "tb_held_0019",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.5333,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0020",
       "delta": "delta_a",
-      "judge_score": 0.7833,
+      "baseline_type": "week10",
       "deterministic_score": 0.5167,
-      "score_lift": 0.2666
+      "judge_score": 0.5333,
+      "score_lift": 0.0166
     },
     {
       "task_id": "tb_held_0021",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.5333,
+      "score_lift": -0.0334
     },
     {
       "task_id": "tb_held_0022",
       "delta": "delta_a",
-      "judge_score": 0.6667,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.1334
+      "judge_score": 0.3333,
+      "score_lift": -0.2
     },
     {
       "task_id": "tb_held_0023",
       "delta": "delta_a",
-      "judge_score": 0.9333,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4
+      "judge_score": 0.8667,
+      "score_lift": 0.3334
     },
     {
       "task_id": "tb_held_0024",
       "delta": "delta_a",
-      "judge_score": 0.6667,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.1
+      "judge_score": 0.5333,
+      "score_lift": -0.0334
     },
     {
       "task_id": "tb_held_0025",
       "delta": "delta_a",
-      "judge_score": 0.7833,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.25
+      "judge_score": 0.65,
+      "score_lift": 0.1167
     },
     {
       "task_id": "tb_held_0026",
       "delta": "delta_a",
-      "judge_score": 0.6833,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.1166
+      "judge_score": 0.5333,
+      "score_lift": -0.0334
     },
     {
       "task_id": "tb_held_0027",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4,
-      "score_lift": 0.6
+      "judge_score": 0.4667,
+      "score_lift": 0.0667
     },
     {
       "task_id": "tb_held_0028",
       "delta": "delta_a",
-      "judge_score": 0.8,
+      "baseline_type": "week10",
       "deterministic_score": 0.4,
-      "score_lift": 0.4
+      "judge_score": 0.4667,
+      "score_lift": 0.0667
     },
     {
       "task_id": "tb_held_0029",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.6833,
+      "score_lift": 0.1166
     },
     {
       "task_id": "tb_held_0030",
       "delta": "delta_a",
-      "judge_score": 0.7833,
+      "baseline_type": "week10",
       "deterministic_score": 0.4,
-      "score_lift": 0.3833
+      "judge_score": 0.45,
+      "score_lift": 0.05
     },
     {
       "task_id": "tb_held_0031",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.4667,
-      "score_lift": 0.5333
+      "judge_score": 0.65,
+      "score_lift": 0.1833
     },
     {
       "task_id": "tb_held_0032",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.4667,
+      "score_lift": -0.1
     },
     {
       "task_id": "tb_held_0033",
       "delta": "delta_a",
-      "judge_score": 0.8,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.2667
+      "judge_score": 0.5333,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0034",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.1167,
-      "score_lift": 0.8833
+      "judge_score": 0.4667,
+      "score_lift": 0.35
     },
     {
       "task_id": "tb_held_0035",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.5833,
+      "score_lift": 0.0166
     },
     {
       "task_id": "tb_held_0036",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.4667,
+      "score_lift": -0.1
     },
     {
       "task_id": "tb_held_0037",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5333,
-      "score_lift": 0.4667
+      "judge_score": 0.4667,
+      "score_lift": -0.0666
     },
     {
       "task_id": "tb_held_0038",
       "delta": "delta_a",
-      "judge_score": 1.0,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.4333
+      "judge_score": 0.65,
+      "score_lift": 0.0833
     },
     {
       "task_id": "tb_held_0039",
       "delta": "delta_a",
-      "judge_score": 0.7333,
+      "baseline_type": "week10",
       "deterministic_score": 0.5667,
-      "score_lift": 0.1666
+      "judge_score": 0.65,
+      "score_lift": 0.0833
     },
     {
       "task_id": "tb_held_0040",
       "delta": "delta_a",
-      "judge_score": 0.7833,
+      "baseline_type": "week10",
       "deterministic_score": 0.7,
-      "score_lift": 0.0833
+      "judge_score": 0.5333,
+      "score_lift": -0.1667
     },
     {
       "task_id": "tb_held_0001",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.7333,
+      "score_lift": 0.5166
     },
     {
       "task_id": "tb_held_0002",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4833,
+      "judge_score": 0.7333,
+      "score_lift": 0.25
     },
     {
       "task_id": "tb_held_0003",
       "delta": "delta_b",
-      "judge_score": 0.8,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.3667,
+      "judge_score": 0.65,
+      "score_lift": 0.2833
     },
     {
       "task_id": "tb_held_0004",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.8667,
+      "score_lift": 0.65
     },
     {
       "task_id": "tb_held_0005",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.7333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0006",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.1333,
+      "judge_score": 0.5667,
+      "score_lift": 0.4334
     },
     {
       "task_id": "tb_held_0007",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4,
+      "judge_score": 0.8,
+      "score_lift": 0.4
     },
     {
       "task_id": "tb_held_0008",
       "delta": "delta_b",
-      "judge_score": 0.6667,
-      "deterministic_score": 1.0,
-      "score_lift": -0.3333
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.8667,
+      "score_lift": 0.45
     },
     {
       "task_id": "tb_held_0009",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2667,
+      "judge_score": 0.5333,
+      "score_lift": 0.2666
     },
     {
       "task_id": "tb_held_0010",
       "delta": "delta_b",
-      "judge_score": 0.7833,
-      "deterministic_score": 0.7833,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.8667,
+      "score_lift": 0.45
     },
     {
       "task_id": "tb_held_0011",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.3833,
+      "judge_score": 0.75,
+      "score_lift": 0.3667
     },
     {
       "task_id": "tb_held_0012",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4667,
+      "judge_score": 0.4833,
+      "score_lift": 0.0166
     },
     {
       "task_id": "tb_held_0013",
       "delta": "delta_b",
-      "judge_score": 0.8,
-      "deterministic_score": 0.8,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.55,
+      "judge_score": 0.7333,
+      "score_lift": 0.1833
     },
     {
       "task_id": "tb_held_0014",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.5333,
+      "score_lift": 0.1166
     },
     {
       "task_id": "tb_held_0015",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.7333,
+      "score_lift": 0.5166
     },
     {
       "task_id": "tb_held_0016",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.6333,
+      "score_lift": 0.2166
     },
     {
       "task_id": "tb_held_0017",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.7333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0018",
       "delta": "delta_b",
-      "judge_score": 0.65,
-      "deterministic_score": 0.65,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.75,
+      "score_lift": 0.3333
     },
     {
       "task_id": "tb_held_0019",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.3333,
+      "judge_score": 0.8667,
+      "score_lift": 0.5334
     },
     {
       "task_id": "tb_held_0020",
       "delta": "delta_b",
-      "judge_score": 0.7833,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2167
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.4167,
+      "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0021",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.7333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0022",
       "delta": "delta_b",
-      "judge_score": 0.6667,
-      "deterministic_score": 0.6667,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.7333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0023",
       "delta": "delta_b",
-      "judge_score": 0.9333,
-      "deterministic_score": 1.0,
-      "score_lift": -0.0667
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.45,
+      "judge_score": 0.6833,
+      "score_lift": 0.2333
     },
     {
       "task_id": "tb_held_0024",
       "delta": "delta_b",
-      "judge_score": 0.6667,
-      "deterministic_score": 1.0,
-      "score_lift": -0.3333
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.35,
+      "judge_score": 0.7333,
+      "score_lift": 0.3833
     },
     {
       "task_id": "tb_held_0025",
       "delta": "delta_b",
-      "judge_score": 0.7833,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2167
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.0,
+      "judge_score": 0.8,
+      "score_lift": 0.8
     },
     {
       "task_id": "tb_held_0026",
       "delta": "delta_b",
-      "judge_score": 0.6833,
-      "deterministic_score": 1.0,
-      "score_lift": -0.3167
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.5333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0027",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.7333,
+      "score_lift": 0.5166
     },
     {
       "task_id": "tb_held_0028",
       "delta": "delta_b",
-      "judge_score": 0.8,
-      "deterministic_score": 0.8,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.35,
+      "judge_score": 0.65,
+      "score_lift": 0.3
     },
     {
       "task_id": "tb_held_0029",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.35,
+      "judge_score": 0.8,
+      "score_lift": 0.45
     },
     {
       "task_id": "tb_held_0030",
       "delta": "delta_b",
-      "judge_score": 0.7833,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2167
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.5833,
+      "score_lift": 0.1666
     },
     {
       "task_id": "tb_held_0031",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.5167,
+      "judge_score": 0.5833,
+      "score_lift": 0.0666
     },
     {
       "task_id": "tb_held_0032",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.3833,
+      "judge_score": 0.8667,
+      "score_lift": 0.4834
     },
     {
       "task_id": "tb_held_0033",
       "delta": "delta_b",
-      "judge_score": 0.8,
-      "deterministic_score": 0.8,
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.3333,
+      "judge_score": 0.3333,
       "score_lift": 0.0
     },
     {
       "task_id": "tb_held_0034",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.35,
+      "judge_score": 0.7333,
+      "score_lift": 0.3833
     },
     {
       "task_id": "tb_held_0035",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4167,
+      "judge_score": 0.7333,
+      "score_lift": 0.3166
     },
     {
       "task_id": "tb_held_0036",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.4,
+      "judge_score": 0.5333,
+      "score_lift": 0.1333
     },
     {
       "task_id": "tb_held_0037",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.7333,
+      "score_lift": 0.5166
     },
     {
       "task_id": "tb_held_0038",
       "delta": "delta_b",
-      "judge_score": 1.0,
-      "deterministic_score": 1.0,
-      "score_lift": 0.0
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.4833,
+      "score_lift": 0.2666
     },
     {
       "task_id": "tb_held_0039",
       "delta": "delta_b",
-      "judge_score": 0.7333,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2667
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.2167,
+      "judge_score": 0.4667,
+      "score_lift": 0.25
     },
     {
       "task_id": "tb_held_0040",
       "delta": "delta_b",
-      "judge_score": 0.7833,
-      "deterministic_score": 1.0,
-      "score_lift": -0.2167
+      "baseline_type": "prompt-only",
+      "deterministic_score": 0.7,
+      "judge_score": 0.6833,
+      "score_lift": -0.0167
     }
   ],
   "summary": {
-    "delta_a": {
-      "n_tasks": 40,
-      "avg_score_lift": 0.4108,
-      "wins": 40,
-      "losses": 0,
-      "ties": 0,
-      "win_rate": 1.0
-    },
     "delta_b": {
       "n_tasks": 40,
-      "avg_score_lift": -0.0596,
-      "wins": 0,
-      "losses": 10,
-      "ties": 30,
-      "win_rate": 0.0
+      "avg_score_lift": 0.3204,
+      "wins": 37,
+      "losses": 1,
+      "ties": 2,
+      "win_rate": 0.925
+    },
+    "delta_a": {
+      "n_tasks": 40,
+      "avg_score_lift": 0.0641,
+      "wins": 23,
+      "losses": 11,
+      "ties": 6,
+      "win_rate": 0.575
     }
   }
 }
