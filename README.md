@@ -6,6 +6,7 @@
 **Dataset:** https://huggingface.co/datasets/ketewodros41/tenacious-bench-v0.1
 **Judge adapter:** https://huggingface.co/ketewodros41/qwen2.5-1.5b-simpo-tenacious-judge
 **Blog post:** https://dev.to/kidus_tewodros_c94ec972cc/tenacious-bench-v01-what-happens-when-you-build-a-benchmark-for-your-own-agents-failures-2eam
+**Community engagement:** https://github.com/sierra-research/tau2-bench/issues/275
 
 ---
 
