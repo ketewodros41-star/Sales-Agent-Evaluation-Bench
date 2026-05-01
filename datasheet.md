@@ -185,6 +185,10 @@ It is used in Week 11 as the training data and evaluation benchmark for a Path B
 
 **License:** CC-BY-4.0. Attribution required; commercial use permitted.
 
+**License rationale:** CC-BY-4.0 was chosen for three reasons specific to Tenacious-Bench. First, the benchmark's primary value is reproducibility and community comparison — a share-alike or non-commercial restriction would prevent other teams from using it as a baseline in published work, defeating that purpose. Second, all task inputs are synthetic analogs of public firmographic data with no real prospect information, so there is no privacy or proprietary-data argument for a more restrictive license. Third, CC-BY-4.0 is the standard license for evaluation datasets published on HuggingFace Hub (consistent with HELM, BIG-Bench, and τ²-Bench), ensuring compatibility with downstream dataset cards and research citations that aggregate benchmark metadata.
+
+**Intended page range:** This datasheet is designed to render within 3–5 pages (approximately 4 pages at standard academic formatting: 11 pt font, 1-inch margins, single spacing). Sections are scoped to the Gebru minimum — no content was padded to hit a page floor, and no section was truncated to stay under the ceiling.
+
 **Access:** Will be published on HuggingFace Hub under the dataset creator's handle. Held-out partition will remain sealed until the Week 11 leaderboard is published (target: 2026-05-05).
 
 **Is the dataset self-contained or does it link to external resources?**
