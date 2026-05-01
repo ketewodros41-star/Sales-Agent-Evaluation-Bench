@@ -34,10 +34,11 @@ secrets.json
 *.safetensors
 *.gguf
 
-# Training artifacts (not yet committed — Days 5-6)
-training/
-training_data/
-ablations/
+# Training artifacts — model weights excluded, scripts and data included
+training/qwen_simpo_judge*/
+training/qwen_simpo_judge_v3/
+training_data/baseline_outputs.jsonl
+ablations/held_out_traces.jsonl
 
 # Held-out seal (keep held_out/ in repo but never expose in training scripts)
 # held_out is version-controlled but excluded from training pipelines via script flags

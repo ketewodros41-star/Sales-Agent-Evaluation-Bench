@@ -34,23 +34,35 @@ CTA_PATTERNS = [
     r"let\s+me\s+know\s+if\s+you.{0,20}open",
 ]
 
-# Banned phrase patterns from Tenacious style guide v2
+# Banned phrase patterns — exact list from Tenacious Style Guide v2 "Banned Phrases" section
 DEFAULT_BANNED_PHRASES = [
-    "offshore",
-    "outsourcing",
-    "cost reduction",
-    "cost-reduction",
-    "scale aggressively",
-    "aggressive hiring",
-    "massive growth",
-    "limited-time",
-    "limited time offer",
-    "act now",
+    "world-class",
+    "top talent",
+    "a-players",
+    "rockstar",
+    "ninja",
+    "wizard",
+    "skyrocket",
+    "supercharge",
+    "10x",
+    "i hope this email finds you well",
+    "just following up",
+    "circling back",
+    "quick question",
+    "quick chat",
+    "synergize",
+    "synergy",
+    "leverage",
+    "ecosystem",
+    "game-changer",
+    "game changer",
+    "disruptor",
+    "paradigm shift",
+    "you'll regret missing this",
+    "don't miss out",
+    "per my last email",
     "you're falling behind",
-    "your competitors are miles ahead",
-    "you're still in the early stages",
-    "i apologize",
-    "i understand your concern",
+    "behind the curve",
 ]
 
 # Hedging patterns required when signal confidence is low
@@ -126,8 +138,8 @@ def score_tone_alignment(output: str, task: dict[str, Any]) -> int:
     """
     Score 0–3:
     0 = banned phrase detected
-    1 = no banned phrases but generic/template tone
-    2 = Tenacious-voice compliant (direct, no filler)
+    1 = no banned phrases but generic/template tone, OR word count exceeds limit
+    2 = Tenacious-voice compliant (direct, no filler, within word count)
     3 = peer-to-peer expert register
     """
     output_lower = output.lower()
@@ -138,17 +150,22 @@ def score_tone_alignment(output: str, task: dict[str, Any]) -> int:
         if phrase.lower() in output_lower:
             return 0
 
+    # Word count check: cold ≤ 120, warm reply ≤ 200 (prior_thread non-empty = warm)
+    prior_thread = task.get("input", {}).get("prior_thread", "")
+    word_limit = 200 if prior_thread else 120
+    word_count = len(output.split())
+    if word_count > word_limit:
+        return 1
+
     # Check for template / filler language
     filler_patterns = [
-        r"hope\s+this\s+(email\s+)?finds\s+you\s+well",
         r"i\s+am\s+reaching\s+out\s+to",
         r"touch\s+base",
-        r"circle\s+back",
-        r"synergy",
-        r"leverage\s+our\s+core\s+competenc",
+        r"i\s+wanted\s+to\s+check\s+in",
         r"best\s+in\s+class\b",
-        r"game[- ]changer",
         r"end[- ]to[- ]end\s+solution",
+        r"value[- ]add",
+        r"add\s+value\s+to",
     ]
     for pat in filler_patterns:
         if re.search(pat, output_lower):
@@ -208,12 +225,16 @@ def score_cta_quality(output: str, task: dict[str, Any]) -> int:
 def score_bench_fit(output: str, task: dict[str, Any]) -> int:
     """
     Score 0–3:
-    0 = impossible headcount commitment made
+    0 = "bench" used in prospect-facing output (Professional violation), or impossible headcount commitment
     1 = bench not referenced when required
-    2 = bench referenced without over-commitment
+    2 = capacity referenced without over-commitment
     3 = bench-gated routing with delivery-lead handoff
     """
     output_lower = output.lower()
+
+    # "bench" in prospect-facing output is a Professional-marker violation (Style Guide v2)
+    if re.search(r"\bbench\b", output_lower):
+        return 0
 
     # Check for headcount over-commitment
     for pat in HEADCOUNT_COMMITMENT_PATTERNS:
@@ -223,17 +244,16 @@ def score_bench_fit(output: str, task: dict[str, Any]) -> int:
     bench_summary = task["input"].get("bench_summary", "")
     requires_bench = "0" in bench_summary or "Rust" in bench_summary
 
-    # Check for routing behaviour
+    # Check for routing behaviour (positive signal: routes to human/delivery lead)
     routing_present = any(re.search(p, output_lower) for p in ROUTING_PATTERNS)
     if routing_present:
         return 3
 
-    # Check if bench is mentioned without commitment
-    bench_mention = re.search(r"\b(bench|capacity|availability|engineer|team)\b", output_lower)
-    if bench_mention:
+    # Capacity/availability mentioned without commitment
+    capacity_mention = re.search(r"\b(capacity|availability|engineer|team)\b", output_lower)
+    if capacity_mention:
         return 2
 
-    # Bench not mentioned when it should be
     return 1 if requires_bench else 2
 
 

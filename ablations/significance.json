@@ -1,0 +1,20 @@
+{
+  "delta_a": {
+    "mean_lift": 0.4108,
+    "ci_95_lower": 0.3587,
+    "ci_95_upper": 0.4608,
+    "p_value_one_tailed": 0.0,
+    "significant_at_0.05": true,
+    "n_bootstrap": 1000,
+    "n_tasks": 40
+  },
+  "delta_b": {
+    "mean_lift": -0.0596,
+    "ci_95_lower": -0.0975,
+    "ci_95_upper": -0.0292,
+    "p_value_one_tailed": 1.0,
+    "significant_at_0.05": false,
+    "n_bootstrap": 1000,
+    "n_tasks": 40
+  }
+}

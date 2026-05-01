@@ -1,0 +1,582 @@
+{
+  "results": [
+    {
+      "task_id": "tb_held_0001",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4667,
+      "score_lift": 0.5333
+    },
+    {
+      "task_id": "tb_held_0002",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0003",
+      "delta": "delta_a",
+      "judge_score": 0.8,
+      "deterministic_score": 0.2167,
+      "score_lift": 0.5833
+    },
+    {
+      "task_id": "tb_held_0004",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4,
+      "score_lift": 0.6
+    },
+    {
+      "task_id": "tb_held_0005",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0006",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0007",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0008",
+      "delta": "delta_a",
+      "judge_score": 0.6667,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.1
+    },
+    {
+      "task_id": "tb_held_0009",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4667,
+      "score_lift": 0.5333
+    },
+    {
+      "task_id": "tb_held_0010",
+      "delta": "delta_a",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.4667,
+      "score_lift": 0.3166
+    },
+    {
+      "task_id": "tb_held_0011",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0012",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0013",
+      "delta": "delta_a",
+      "judge_score": 0.8,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.2333
+    },
+    {
+      "task_id": "tb_held_0014",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0015",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4,
+      "score_lift": 0.6
+    },
+    {
+      "task_id": "tb_held_0016",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0017",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.2167,
+      "score_lift": 0.7833
+    },
+    {
+      "task_id": "tb_held_0018",
+      "delta": "delta_a",
+      "judge_score": 0.65,
+      "deterministic_score": 0.25,
+      "score_lift": 0.4
+    },
+    {
+      "task_id": "tb_held_0019",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0020",
+      "delta": "delta_a",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.5167,
+      "score_lift": 0.2666
+    },
+    {
+      "task_id": "tb_held_0021",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0022",
+      "delta": "delta_a",
+      "judge_score": 0.6667,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.1334
+    },
+    {
+      "task_id": "tb_held_0023",
+      "delta": "delta_a",
+      "judge_score": 0.9333,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4
+    },
+    {
+      "task_id": "tb_held_0024",
+      "delta": "delta_a",
+      "judge_score": 0.6667,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.1
+    },
+    {
+      "task_id": "tb_held_0025",
+      "delta": "delta_a",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.25
+    },
+    {
+      "task_id": "tb_held_0026",
+      "delta": "delta_a",
+      "judge_score": 0.6833,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.1166
+    },
+    {
+      "task_id": "tb_held_0027",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4,
+      "score_lift": 0.6
+    },
+    {
+      "task_id": "tb_held_0028",
+      "delta": "delta_a",
+      "judge_score": 0.8,
+      "deterministic_score": 0.4,
+      "score_lift": 0.4
+    },
+    {
+      "task_id": "tb_held_0029",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0030",
+      "delta": "delta_a",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.4,
+      "score_lift": 0.3833
+    },
+    {
+      "task_id": "tb_held_0031",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.4667,
+      "score_lift": 0.5333
+    },
+    {
+      "task_id": "tb_held_0032",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0033",
+      "delta": "delta_a",
+      "judge_score": 0.8,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.2667
+    },
+    {
+      "task_id": "tb_held_0034",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.1167,
+      "score_lift": 0.8833
+    },
+    {
+      "task_id": "tb_held_0035",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0036",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0037",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5333,
+      "score_lift": 0.4667
+    },
+    {
+      "task_id": "tb_held_0038",
+      "delta": "delta_a",
+      "judge_score": 1.0,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.4333
+    },
+    {
+      "task_id": "tb_held_0039",
+      "delta": "delta_a",
+      "judge_score": 0.7333,
+      "deterministic_score": 0.5667,
+      "score_lift": 0.1666
+    },
+    {
+      "task_id": "tb_held_0040",
+      "delta": "delta_a",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.7,
+      "score_lift": 0.0833
+    },
+    {
+      "task_id": "tb_held_0001",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0002",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0003",
+      "delta": "delta_b",
+      "judge_score": 0.8,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2
+    },
+    {
+      "task_id": "tb_held_0004",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0005",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0006",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0007",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0008",
+      "delta": "delta_b",
+      "judge_score": 0.6667,
+      "deterministic_score": 1.0,
+      "score_lift": -0.3333
+    },
+    {
+      "task_id": "tb_held_0009",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0010",
+      "delta": "delta_b",
+      "judge_score": 0.7833,
+      "deterministic_score": 0.7833,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0011",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0012",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0013",
+      "delta": "delta_b",
+      "judge_score": 0.8,
+      "deterministic_score": 0.8,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0014",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0015",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0016",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0017",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0018",
+      "delta": "delta_b",
+      "judge_score": 0.65,
+      "deterministic_score": 0.65,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0019",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0020",
+      "delta": "delta_b",
+      "judge_score": 0.7833,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2167
+    },
+    {
+      "task_id": "tb_held_0021",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0022",
+      "delta": "delta_b",
+      "judge_score": 0.6667,
+      "deterministic_score": 0.6667,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0023",
+      "delta": "delta_b",
+      "judge_score": 0.9333,
+      "deterministic_score": 1.0,
+      "score_lift": -0.0667
+    },
+    {
+      "task_id": "tb_held_0024",
+      "delta": "delta_b",
+      "judge_score": 0.6667,
+      "deterministic_score": 1.0,
+      "score_lift": -0.3333
+    },
+    {
+      "task_id": "tb_held_0025",
+      "delta": "delta_b",
+      "judge_score": 0.7833,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2167
+    },
+    {
+      "task_id": "tb_held_0026",
+      "delta": "delta_b",
+      "judge_score": 0.6833,
+      "deterministic_score": 1.0,
+      "score_lift": -0.3167
+    },
+    {
+      "task_id": "tb_held_0027",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0028",
+      "delta": "delta_b",
+      "judge_score": 0.8,
+      "deterministic_score": 0.8,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0029",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0030",
+      "delta": "delta_b",
+      "judge_score": 0.7833,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2167
+    },
+    {
+      "task_id": "tb_held_0031",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0032",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0033",
+      "delta": "delta_b",
+      "judge_score": 0.8,
+      "deterministic_score": 0.8,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0034",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0035",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0036",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0037",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0038",
+      "delta": "delta_b",
+      "judge_score": 1.0,
+      "deterministic_score": 1.0,
+      "score_lift": 0.0
+    },
+    {
+      "task_id": "tb_held_0039",
+      "delta": "delta_b",
+      "judge_score": 0.7333,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2667
+    },
+    {
+      "task_id": "tb_held_0040",
+      "delta": "delta_b",
+      "judge_score": 0.7833,
+      "deterministic_score": 1.0,
+      "score_lift": -0.2167
+    }
+  ],
+  "summary": {
+    "delta_a": {
+      "n_tasks": 40,
+      "avg_score_lift": 0.4108,
+      "wins": 40,
+      "losses": 0,
+      "ties": 0,
+      "win_rate": 1.0
+    },
+    "delta_b": {
+      "n_tasks": 40,
+      "avg_score_lift": -0.0596,
+      "wins": 0,
+      "losses": 10,
+      "ties": 30,
+      "win_rate": 0.0
+    }
+  }
+}

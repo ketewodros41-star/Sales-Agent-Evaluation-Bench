@@ -10,7 +10,7 @@ voice, our segments, our bench?
 This week you build the answer. You audit what existing benchmarks miss for Tenacious-style B2B sales
 work. You construct a sales-domain evaluation dataset using multi-LLM synthesis and judge filtering on a
 small seed corpus. You train a small model component — a generation adapter, a judge, or a process
-scorer — that lifts your Week 10 agent on a Tenacious-specific failure mode. And you ship the work
+scorer — that lifts your Week 1 0 agent on a Tenacious-specific failure mode. And you ship the work
 publicly: a HuggingFace dataset with full datasheet, a trained adapter or judge with model card, a
 technical blog post under your name, and an artifact contributed to the open evaluation community.
 The hardest engineering problem of the week is the dataset, not the training run. Tenacious has a small

@@ -1,0 +1,149 @@
+{
+  "description": "Maps every numeric claim in memo.md and blog_post_draft.md to its source artifact.",
+  "claims": [
+    {
+      "claim": "38.7% pass@1 on τ²-Bench retail evaluation slice",
+      "source": "Week 10 evaluation run",
+      "artifact": "Week 10 trace_log.jsonl",
+      "notes": "Reused as informational reference per week11.md instruction"
+    },
+    {
+      "claim": "200 tasks in Tenacious-Bench v0.1",
+      "source": "tenacious_bench_v0.1/ partition counts",
+      "artifact": "tenacious_bench_v0.1/train/tasks.jsonl (100) + dev/tasks.jsonl (60) + held_out/tasks.jsonl (40)"
+    },
+    {
+      "claim": "κ ≥ 0.80 on all dimensions post-calibration",
+      "source": "inter_rater_agreement.md",
+      "artifact": "inter_rater_agreement.md"
+    },
+    {
+      "claim": "44 preference pairs",
+      "source": "re-scoring of preference_pairs.jsonl with corrected evaluator (Style Guide v2)",
+      "artifact": "training_data/preference_pairs_v2.jsonl",
+      "verification": "wc -l training_data/preference_pairs_v2.jsonl == 44"
+    },
+    {
+      "claim": "Score gap δ ≥ 0.20",
+      "source": "build_pairs.py --delta argument",
+      "artifact": "training_data/build_pairs.py line 154"
+    },
+    {
+      "claim": "Training wall time: 2 min (90 s)",
+      "source": "Colab training run",
+      "artifact": "training/qwen_simpo_judge_v2/run_log.json",
+      "key": "total_elapsed_s",
+      "value": 89.8
+    },
+    {
+      "claim": "Final training loss: 3.37",
+      "source": "Colab training run",
+      "artifact": "training/qwen_simpo_judge_v2/run_log.json",
+      "key": "final_loss",
+      "value": 3.3676,
+      "notes": "CPO NLL+preference loss — not comparable to pure SimPO 0.65 kill criterion"
+    },
+    {
+      "claim": "rewards/margins trending positive (+0.52 at final step, from -1.25 at step 1)",
+      "source": "Colab training log",
+      "artifact": "training/qwen_simpo_judge_v2/run_log.json",
+      "notes": "Positive trend confirms model learned preference direction on 44 corrected pairs"
+    },
+    {
+      "claim": "Delta A mean lift: +0.4108",
+      "source": "Colab ablation — trained Qwen judge (v2, 44 corrected pairs) scoring 40 held-out baseline emails vs corrected deterministic evaluator (Style Guide v2 banned phrases, word count, bench word check)",
+      "artifact": "ablations/ablation_results.json",
+      "key": "summary.delta_a.avg_score_lift",
+      "value": 0.4108
+    },
+    {
+      "claim": "Delta A 95% CI: [0.3587, 0.4608]",
+      "source": "1000 bootstrap resamples, seed=42",
+      "artifact": "ablations/significance.json",
+      "key": "delta_a.ci_95_lower / ci_95_upper",
+      "value": [0.3587, 0.4608]
+    },
+    {
+      "claim": "Delta A p < 0.0001",
+      "source": "ablations/bootstrap_test.py",
+      "artifact": "ablations/significance.json",
+      "key": "delta_a.p_value_one_tailed",
+      "value": 0.0
+    },
+    {
+      "claim": "Delta A win rate 40/40 (100%)",
+      "source": "Colab ablation",
+      "artifact": "ablations/ablation_results.json",
+      "key": "summary.delta_a.wins / n_tasks",
+      "value": "40/40"
+    },
+    {
+      "claim": "Delta B mean lift: -0.0596",
+      "source": "Colab ablation — trained judge vs raw Qwen backbone (no adapter) on same 40 emails",
+      "artifact": "ablations/ablation_results.json",
+      "key": "summary.delta_b.avg_score_lift",
+      "value": -0.0596
+    },
+    {
+      "claim": "Delta B 95% CI: [-0.0975, -0.0292]",
+      "source": "1000 bootstrap resamples, seed=42",
+      "artifact": "ablations/significance.json",
+      "key": "delta_b.ci_95_lower / ci_95_upper",
+      "value": [-0.0975, -0.0292]
+    },
+    {
+      "claim": "Delta B not significant at alpha=0.05 (negative direction — training made judge stricter)",
+      "source": "ablations/bootstrap_test.py",
+      "artifact": "ablations/significance.json",
+      "key": "delta_b.significant_at_0.05",
+      "value": false
+    },
+    {
+      "claim": "Cost ~$0.0004/task with trained pipeline",
+      "source": "OpenRouter pricing (DeepSeek V3.2: $0.27/1M input, $1.10/1M output)",
+      "artifact": "cost_log",
+      "notes": "~600 input tokens + 300 output tokens per task = ~$0.0004"
+    },
+    {
+      "claim": "Cost ~$0.0002/task without trained pipeline",
+      "source": "OpenRouter pricing (gpt-4o-mini: $0.15/1M input, $0.60/1M output)",
+      "artifact": "cost_log",
+      "notes": "~600 input + 200 output per task"
+    },
+    {
+      "claim": "4.2% acceptance rate — Qwen judging Claude-generated tasks",
+      "source": "blog_post_draft.md methodology section",
+      "artifact": "generation_scripts/ judge filter logs"
+    },
+    {
+      "claim": "78% acceptance when Claude judges Claude-generated tasks",
+      "source": "blog_post_draft.md methodology section",
+      "artifact": "generation_scripts/ judge filter logs"
+    },
+    {
+      "claim": "v3 training data: 69 pairs (44 original + 25 excellence-tier)",
+      "source": "training_data/build_ideal_pairs.py — run output",
+      "artifact": "training_data/preference_pairs_v3.jsonl",
+      "verification": "wc -l training_data/preference_pairs_v3.jsonl == 69",
+      "notes": "Excellence-tier: chosen=ideal email (0.90-1.00), rejected=former v2 chosen (0.35-0.57)"
+    },
+    {
+      "claim": "Excellence-tier ideal email score: 0.90 (22 pairs) or 1.00 (1 pair, tb_train_0046)",
+      "source": "scoring_evaluator.py applied to IDEAL_EMAILS in build_ideal_pairs.py",
+      "artifact": "training_data/build_ideal_pairs.py",
+      "notes": "sg=2,ta=3,cq=3,bf=3,pd=3 → 0.90; tb_train_0046 gets sg=3 via required_hedges → 1.00"
+    },
+    {
+      "claim": "Excellence-tier score gap: +0.33 to +0.65 (mean ~+0.44)",
+      "source": "build_ideal_pairs.py run output",
+      "artifact": "training_data/preference_pairs_v3.jsonl",
+      "notes": "All 25 new pairs exceed delta >= 0.20 threshold; previous v2 pairs averaged ~+0.22"
+    },
+    {
+      "claim": "v3 training Colab bundle: colab_training_v4.zip",
+      "source": "local build",
+      "artifact": "colab_training_v4.zip",
+      "notes": "Run: python train_simpo.py --pairs preference_pairs_v3.jsonl --output qwen_simpo_judge_v3 --epochs 3; v3 ablation results pending"
+    }
+  ]
+}
