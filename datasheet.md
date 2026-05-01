@@ -145,6 +145,42 @@ It is used in Week 11 as the training data and evaluation benchmark for a Path B
 
 ---
 
+## Limitations and Known Biases
+
+### Failure Risks
+
+**Evaluator gaming:** `scoring_evaluator.py` uses deterministic pattern matching — banned-phrase lists, CTA patterns, hedge patterns. A model that memorizes the exact pattern lists can score highly without internalizing the underlying style principles. This is a construct validity risk for `tone_compliance` and `cta_quality`: high scores may reflect pattern avoidance rather than genuine compliance.
+
+**Bench-state resolution gap:** 15% of tasks involve partial bench state (two of three required skill slots committed). No tasks cover dynamic bench-state changes mid-thread (e.g., a slot that opens during a conversation). Agents or judges trained on Tenacious-Bench v0.1 may underperform on real-time inventory scenarios.
+
+**Length–quality confound:** The `personalization_depth` dimension checks for at least two distinct signal references but does not penalize length inflation. An agent that repeats the same signal token twice scores identically to one that references two genuinely distinct signals. This confound is most acute for emails under 120 words.
+
+**Signal-confidence conflation:** Tasks assume internally consistent prospect signals. Real prospects produce contradictory signals (e.g., AI maturity score of 3 but active implementation language in the prior thread). The benchmark does not cover signal-conflict resolution, so a judge trained here may be miscalibrated for contradiction scenarios.
+
+### Population Skews
+
+**Domain specificity:** All 200 tasks are B2B outreach for an AI talent staffing platform. Zero coverage of other sales domains, other agent modalities (voice, in-app chat), or non-technical staffing categories (executive search, ops roles). Benchmark performance does not generalize across domains.
+
+**Company segment imbalance:** Programmatic tasks cover `company_size ∈ {seed, Series A, Series B}`. No tasks represent enterprise accounts (Series C+), public companies, or bootstrapped SMBs, which involve different tone registers and bench-commitment thresholds.
+
+**Cold outreach absent:** Every task supplies a `bench_summary` and an optional `prior_thread`. Cold outreach — where no prior engagement or bench context exists — is unrepresented. Agent performance on cold outreach is untested by this benchmark.
+
+**Single-turn only:** All tasks are single-turn email generation. Multi-turn conversation sequences (follow-up, objection handling, re-engagement) are not covered in v0.1. Benchmark scores do not predict multi-turn dialogue quality.
+
+**Synthetic signal distribution:** All company signals are synthetic analogs drawn from a Crunchbase ODM sample. The signal distribution (headcount ranges, funding tiers, AI maturity scores) reflects the ODM sample, not the actual Tenacious prospect population. Calibration of trained models may not match the live prospect distribution.
+
+### Misuse Scenarios
+
+**Reporting as a general email-quality benchmark:** High scores on Tenacious-Bench do not imply general email quality. Reporting benchmark performance without domain qualification — "our agent scores 0.78 on Tenacious-Bench" as a proxy for general sales quality — misrepresents scope.
+
+**Training or fine-tuning on the held-out partition:** The 40 held-out tasks are sealed for evaluation only. Including them in any training or preference-pair construction pipeline invalidates the ablation comparisons and inflates reported performance.
+
+**Deploying the trained judge without production validation:** The SimPO judge adapter was trained on 69 rubric-derived preference pairs from 200 synthetic tasks. Deploying it as a production quality gate without validation on real Tenacious prospect interactions and re-annotation by domain experts risks systematic misclassification of edge cases the synthetic distribution does not cover.
+
+**Interpreting per-dimension scores as independent:** The five dimensions are correlated in practice (a signal-grounded email tends to have higher personalization depth). Optimizing individual dimension scores in isolation — e.g., training only on `tone_compliance` pairs — may produce dimension-level gains that do not translate to overall rubric compliance.
+
+---
+
 ## 6. Distribution
 
 **License:** CC-BY-4.0. Attribution required; commercial use permitted.
